@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "debugging-and-error-recovery": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/debugging-and-error-recovery/SKILL.md",
+      "computedHash": "00f95b1754573cbc5f01e3cec5b40759dcd0be97b3abcaffec05fb70422e5bc6"
+    }
+  }
+}
