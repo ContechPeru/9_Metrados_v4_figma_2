@@ -119,7 +119,7 @@ export const ModalNuevaPartida: React.FC<ModalNuevaPartidaProps> = ({ onClose })
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm font-sans">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-slate-100 rounded-xl shadow-2xl w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
           <h2 className="text-lg font-bold text-gray-800">✨ Crear Nuevo Ítem</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -196,7 +196,7 @@ export const ModalNuevaPartida: React.FC<ModalNuevaPartidaProps> = ({ onClose })
                 <select
                   value={especialidad}
                   onChange={e => setEspecialidad(e.target.value)}
-                  className="w-full border-gray-300 rounded text-sm p-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full border-gray-300 rounded text-sm p-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-100"
                   required
                 >
                   <option value="">Seleccione especialidad...</option>
@@ -213,7 +213,7 @@ export const ModalNuevaPartida: React.FC<ModalNuevaPartidaProps> = ({ onClose })
                     type="text" 
                     value={codigoSugerido} 
                     onChange={e => setCodigoSugerido(e.target.value)}
-                    className={`w-full border rounded text-sm p-2 bg-white focus:ring-blue-500 focus:border-blue-500 ${isDuplicateWBS ? 'border-red-500 ring-1 ring-red-500 text-red-700' : 'border-gray-300'}`}
+                    className={`w-full border rounded text-sm p-2 bg-slate-100 focus:ring-blue-500 focus:border-blue-500 ${isDuplicateWBS ? 'border-red-500 ring-1 ring-red-500 text-red-700' : 'border-gray-300'}`}
                     placeholder="Ej. OE.1.2.3"
                     required
                   />
@@ -238,7 +238,7 @@ export const ModalNuevaPartida: React.FC<ModalNuevaPartidaProps> = ({ onClose })
               </div>
 
               {parentId && existingSiblings.length > 0 && (
-                <div className="bg-white border border-gray-200 rounded-lg p-3 mt-3 shadow-sm">
+                <div className="bg-slate-100 border border-gray-200 rounded-lg p-3 mt-3 shadow-sm">
                   <p className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wide">Partidas existentes en este nivel (Hijos de {agrupadores.find(a => a.id === parentId)?.codigo_expediente}):</p>
                   <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
                     {existingSiblings.sort((a,b) => a.codigo_expediente.localeCompare(b.codigo_expediente, undefined, {numeric: true})).map(s => (
@@ -303,7 +303,7 @@ export const ModalNuevaPartida: React.FC<ModalNuevaPartidaProps> = ({ onClose })
           <button 
             type="button" 
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-slate-100 border border-gray-300 rounded-lg hover:bg-gray-50"
             disabled={loading}
           >
             Cancelar

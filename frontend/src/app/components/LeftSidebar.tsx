@@ -163,7 +163,7 @@ export function LeftSidebar() {
         <div className={`h-[60px] flex items-center ${sidebarExpanded ? 'justify-between px-3' : 'justify-center'} border-b`} style={{ borderColor: SIDEBAR_BORDER }}>
           {sidebarExpanded && (
             <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-white shadow-sm border" style={{ borderColor: '#DDE3EC' }}>
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-slate-100 shadow-sm border" style={{ borderColor: '#DDE3EC' }}>
                 <HardHat size={16} color={ACTIVE_BG} strokeWidth={2.5} />
               </div>
               <span style={{ color: LOGO_TEXT, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '15px', letterSpacing: '0.04em' }}>
@@ -173,7 +173,7 @@ export function LeftSidebar() {
           )}
           <button
             onClick={() => setSidebarExpanded(!sidebarExpanded)}
-            className="p-1.5 rounded-md hover:bg-white transition-colors border shadow-sm bg-gray-50"
+            className="p-1.5 rounded-md hover:bg-slate-100 transition-colors border shadow-sm bg-gray-50"
             style={{ color: ICON_DEFAULT, borderColor: '#DDE3EC' }}
             title={sidebarExpanded ? "Colapsar menú" : "Expandir menú"}
           >

@@ -4,6 +4,7 @@ export type MetradoFormValues = {
   autor: string;
   especialidad: string;
   frente: string;
+  ambiente: string;
   bloque: string;
   nivel: string;
   cuadrilla: string;

@@ -45,9 +45,8 @@ const CONFIG_ESPECIALIDAD: Record<string, { label: string | null }> = {
 };
 
 const FRENTES_BLOQUES: Record<string, string[]> = {
-  'F1': ['B1', 'B2', 'B3', 'B8', 'B9', 'B13', 'B14', 'B15', 'EXT1', 'EXT2', 'EXT3', 'EXT4', 'EXT5', 'EXT6', 'EXT7', 'EXT8', 'EXT9'],
-  'F2': ['B4', 'B11', 'B12', 'B16'],
-  'F3': ['B5', 'B6', 'B7', 'B10']
+  'F1': ['B1', 'B2', 'B3', 'B5', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'EXT2', 'EXT3', 'EXT6', 'EXT7', 'EXT8', 'EXT9', 'ZZ'],
+  'F2': ['B4', 'B6']
 };
 
 const NIVELES = ['N1', 'N2', 'N3', 'ZZ', 'AZ'];
@@ -269,7 +268,7 @@ export function MetradosForm() {
 
   return (
     <>
-      <div className="flex flex-col h-full bg-white border-l border-gray-200 relative" style={{ width: 400 }}>
+      <div className="flex flex-col h-full bg-slate-100 border-l border-gray-200 relative" style={{ width: 400 }}>
       <div className={`p-4 border-b flex items-center justify-between text-white ${editingMetrado ? 'bg-orange-500' : 'bg-[#1E3A5F]'}`}>
         <h2 className="text-sm font-bold flex items-center gap-2 tracking-wide uppercase">
           {editingMetrado ? 'Modo Edición' : 'Nuevo Metrado'}
@@ -278,14 +277,14 @@ export function MetradosForm() {
           {editingMetrado && (
             <button 
               onClick={cancelarEdicion} 
-              className="text-xs bg-white text-orange-600 px-2 py-1 rounded font-bold hover:bg-orange-50 transition-colors shadow-sm"
+              className="text-xs bg-slate-100 text-orange-600 px-2 py-1 rounded font-bold hover:bg-orange-50 transition-colors shadow-sm"
             >
               CANCELAR
             </button>
           )}
           <button 
             onClick={() => setRightPanelVisible(false)}
-            className="p-1 rounded hover:bg-white/20 transition-colors"
+            className="p-1 rounded hover:bg-slate-100/20 transition-colors"
             title="Cerrar panel"
           >
             <X size={18} />
@@ -314,7 +313,7 @@ export function MetradosForm() {
                 type="date" 
                 value={values.fecha}
                 onChange={e => updateValue('fecha', e.target.value)}
-                className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 text-gray-600 bg-white"
+                className="text-[10px] border border-gray-300 rounded px-1.5 py-0.5 text-gray-600 bg-slate-100"
               />
               <button onClick={limpiarCamposNum} className="text-gray-400 hover:text-red-500" title="Limpiar Números">
                 <Trash2 size={12} />
@@ -341,7 +340,7 @@ export function MetradosForm() {
               <select 
                 value={values.autor} onChange={e => updateValue('autor', e.target.value)}
                 disabled={!isSuper}
-                className={`w-full text-xs p-1.5 border border-gray-300 rounded ${!isSuper ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-800'}`}
+                className={`w-full text-xs p-1.5 border border-gray-300 rounded ${!isSuper ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-slate-100 text-gray-800'}`}
               >
                 <option value="" disabled>Seleccione su firma...</option>
                 {usuarios.map((u: any) => <option key={u.id} value={u.nombre_completo}>{u.nombre_completo}</option>)}
@@ -399,23 +398,30 @@ export function MetradosForm() {
                 </button>
               )}
               {showPartidaDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-xl z-50 max-h-56 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-slate-100 border border-gray-200 rounded shadow-xl z-50 max-h-56 overflow-y-auto">
                   {partidasOptions.length > 0 ? (
                     <div key="results" className="flex flex-col">
-                      {partidasOptions.map((p, index) => (
+                      {partidasOptions.map((p, index) => {
+                        const isDD = p.codigo_expediente?.toUpperCase().includes('DD');
+                        return (
                         <div
                           key={p.id} 
                           onMouseDown={(e) => {
                             e.preventDefault();
+                            if(isDD) return;
                             handleSelectPartida(p);
                           }}
-                          onMouseEnter={() => setHighlightIndex(index)}
-                          className={`px-3 py-2 cursor-pointer border-b border-gray-100 text-xs transition-colors ${highlightIndex === index ? 'bg-blue-100' : 'hover:bg-blue-50'}`}
+                          onMouseEnter={() => !isDD && setHighlightIndex(index)}
+                          className={`px-3 py-2 border-b border-gray-100 text-xs transition-colors ${
+                            isDD 
+                              ? 'opacity-50 cursor-not-allowed bg-gray-50' 
+                              : highlightIndex === index ? 'bg-blue-100 cursor-pointer' : 'hover:bg-blue-50 cursor-pointer'
+                          }`}
                         >
                           <div className="flex justify-between gap-3">
                             <div className="flex flex-col flex-1 min-w-0">
                               <div className="font-bold text-[#1E3A5F] truncate">
-                                {p.codigo_expediente}
+                                {p.codigo_expediente} {isDD && <span className="text-[9px] text-red-500 font-bold ml-1">(No admitido)</span>}
                               </div>
                               <div className="text-gray-600 text-[11px] leading-tight mt-1 line-clamp-2">
                                 {p.descripcion}
@@ -435,7 +441,7 @@ export function MetradosForm() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      )})}
                     </div>
                   ) : (
                     <div key="no-results" className="px-4 py-6 text-center text-gray-500 text-xs">
@@ -496,7 +502,7 @@ export function MetradosForm() {
                 </div>
                 
                 {/* Toggle para Solo Liberados */}
-                <div className="absolute -top-5 right-1 flex items-center gap-1 bg-white px-2 py-0.5 rounded-t-md border border-b-0 border-slate-200">
+                <div className="absolute -top-5 right-1 flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-t-md border border-b-0 border-slate-200">
                   <input 
                     type="checkbox" 
                     id="soloLiberados" 
@@ -517,33 +523,21 @@ export function MetradosForm() {
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-3">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Paso 2: Ubicación y Elemento</h3>
           
-          <div className="grid grid-cols-4 gap-2">
-            <div>
-              <label className="text-[10px] text-gray-500 mb-1 block">Frente</label>
-              <select 
-                value={values.frente || ''} 
-                onChange={e => {
-                  updateValue('frente', e.target.value);
-                  updateValue('bloque', '');
-                }} 
-                className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-white" 
-              >
-                <option value="">---</option>
-                {Object.keys(FRENTES_BLOQUES).map(f => (
-                  <option key={f} value={f}>{f}</option>
-                ))}
-              </select>
-            </div>
+          <div className="grid grid-cols-3 gap-2">
             <div>
               <label className="text-[10px] text-gray-500 mb-1 block">Bloque</label>
               <select 
                 value={values.bloque || ''} 
-                onChange={e => updateValue('bloque', e.target.value)} 
-                className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-white" 
-                disabled={!values.frente}
+                onChange={e => {
+                  const b = e.target.value;
+                  updateValue('bloque', b);
+                  const f = Object.entries(FRENTES_BLOQUES).find(([_, bs]) => bs.includes(b))?.[0] || '';
+                  updateValue('frente', f);
+                }} 
+                className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-slate-100" 
               >
                 <option value="">---</option>
-                {(FRENTES_BLOQUES[values.frente] || []).map(b => (
+                {Object.values(FRENTES_BLOQUES).flat().sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map(b => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
@@ -553,7 +547,7 @@ export function MetradosForm() {
               <select 
                 value={values.nivel || ''} 
                 onChange={e => updateValue('nivel', e.target.value)} 
-                className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-white" 
+                className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-slate-100" 
               >
                 <option value="">---</option>
                 {NIVELES.map(n => (
@@ -567,9 +561,15 @@ export function MetradosForm() {
                   <input 
                     type="text"
                     value={values.ambiente || ''} 
-                    onChange={e => updateValue('ambiente', e.target.value.toUpperCase())}
+                    onChange={e => {
+                      const val = e.target.value.toUpperCase();
+                      updateValue('ambiente', val);
+                      if (espConfig.label === 'Sistema') {
+                        updateValue('planoSist', val);
+                      }
+                    }}
                     placeholder={`Escriba el ${espConfig.label.toLowerCase()}...`}
-                    className="w-full text-xs p-1.5 border border-blue-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-blue-50 uppercase" 
+                    className="w-full text-xs p-1.5 border border-blue-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-blue-50/30 uppercase" 
                   />
                 </div>
               ) : (
@@ -577,29 +577,7 @@ export function MetradosForm() {
               )}
           </div>
 
-          <div className="bg-blue-50/50 border border-blue-100 rounded p-2 space-y-2">
-            <div>
-              <label className="text-[10px] text-blue-600 font-bold mb-1 block">Código Cuadrilla</label>
-              <input 
-                list="cdlla-form-list"
-                value={values.cuadrilla} onChange={e => updateValue('cuadrilla', e.target.value)}
-                onFocus={(e: any) => e.target.select()}
-                placeholder="Ej. C1"
-                className="w-full text-xs p-1.5 border border-blue-200 rounded"
-              />
-              <datalist id="cdlla-form-list">
-                {cuadrillasUnicas.map(c => <option key={c} value={c} />)}
-              </datalist>
-            </div>
-            
-            <div>
-              <label className="text-[10px] text-blue-600 font-bold mb-1 block">Obreros de la Cuadrilla</label>
-              <PersonalMultiSelect 
-                especialidadActual={user?.especialidad || values.especialidad} 
-                cuadrillaFilter={values.cuadrilla}
-              />
-            </div>
-          </div>
+
 
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -644,7 +622,7 @@ export function MetradosForm() {
                     </div>
                     
                     {openHvac && (
-                      <div className="absolute top-full mt-1 left-0 right-0 z-50 bg-white border border-gray-200 rounded shadow-xl overflow-hidden">
+                      <div className="absolute top-full mt-1 left-0 right-0 z-50 bg-slate-100 border border-gray-200 rounded shadow-xl overflow-hidden">
                         <Command.List className="max-h-48 overflow-y-auto p-1">
                           {factoresHvac.filter(f => f.label.toLowerCase().includes(hvacSearch.toLowerCase())).length === 0 && (
                             <Command.Empty className="p-3 text-xs text-gray-500 text-center font-medium">No encontrado.</Command.Empty>
@@ -687,13 +665,13 @@ export function MetradosForm() {
         </div>
 
         {/* TARJETA 3: Cuánto (Matemática) */}
-        <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-3 space-y-3">
+        <div className="bg-slate-100 border-2 border-dashed border-gray-300 rounded-lg p-3 space-y-3">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Fila 4: Matemática</h3>
           
           {isAcero && (
             <div className="bg-orange-50 border border-orange-200 rounded p-2 mb-2">
               <label className="text-[10px] text-orange-700 font-bold mb-1 block">Diámetro Acero</label>
-              <select value={values.diametroAcero} onChange={e => updateValue('diametroAcero', e.target.value)} className="w-full text-xs p-1.5 border border-orange-300 rounded bg-white text-orange-900 font-bold">
+              <select value={values.diametroAcero} onChange={e => updateValue('diametroAcero', e.target.value)} className="w-full text-xs p-1.5 border border-orange-300 rounded bg-slate-100 text-orange-900 font-bold">
                 <option value="">Seleccionar Ø...</option>
                 <option value="1/4">1/4"</option>
                 <option value="3/8">3/8"</option>
@@ -754,7 +732,7 @@ export function MetradosForm() {
 
         {/* TARJETA 4: Código de Plano */}
         {!values.sinPlano ? (
-          <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-3">
+          <div className="bg-slate-100 border border-gray-200 rounded-lg p-3 space-y-3">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Código de Plano</h3>
               <div className="flex items-center gap-1.5">
@@ -765,7 +743,7 @@ export function MetradosForm() {
                   Anterior
                 </button>
                 <button type="button" onClick={() => updateValue('sinPlano', true)}
-                  className="text-[10px] text-gray-500 hover:text-orange-600 border border-gray-200 hover:border-orange-300 rounded px-2 py-0.5 transition-colors flex items-center gap-1 font-medium bg-white">
+                  className="text-[10px] text-gray-500 hover:text-orange-600 border border-gray-200 hover:border-orange-300 rounded px-2 py-0.5 transition-colors flex items-center gap-1 font-medium bg-slate-100">
                   <span>⚠</span> Sin plano
                 </button>
               </div>
@@ -863,7 +841,7 @@ export function MetradosForm() {
             <p className="text-[10px] text-orange-700">Selecciona el motivo:</p>
             <div className="grid grid-cols-1 gap-1.5">
               {[{value:'extraviado',label:'Plano no localizado en obra'},{value:'en_tramite',label:'Plano en tramite / pendiente de emision'},{value:'sin_diseno',label:'Elemento sin diseno formal'}].map(opt=>(
-                <label key={opt.value} className={`flex items-center gap-2 px-3 py-2 rounded cursor-pointer border transition-colors text-xs ${values.motivoSinPlano===opt.value?'bg-orange-100 border-orange-400 text-orange-900 font-semibold':'bg-white border-gray-200 text-gray-600 hover:border-orange-300'}`}>
+                <label key={opt.value} className={`flex items-center gap-2 px-3 py-2 rounded cursor-pointer border transition-colors text-xs ${values.motivoSinPlano===opt.value?'bg-orange-100 border-orange-400 text-orange-900 font-semibold':'bg-slate-100 border-gray-200 text-gray-600 hover:border-orange-300'}`}>
                   <input type="radio" name="motivoSinPlano" value={opt.value} checked={values.motivoSinPlano===opt.value} onChange={()=>updateValue('motivoSinPlano',opt.value)} className="accent-orange-500"/>
                   {opt.label}
                 </label>
@@ -871,7 +849,7 @@ export function MetradosForm() {
             </div>
             <div>
               <label className="text-[10px] text-orange-700 font-bold mb-1 block">Observacion / sustento</label>
-              <textarea rows={2} value={values.obsSinPlano??''} onChange={e=>updateValue('obsSinPlano',e.target.value)} placeholder="Describe brevemente..." className="w-full text-xs p-2 border border-orange-200 rounded resize-none focus:ring-1 focus:ring-orange-400 outline-none bg-white"/>
+              <textarea rows={2} value={values.obsSinPlano??''} onChange={e=>updateValue('obsSinPlano',e.target.value)} placeholder="Describe brevemente..." className="w-full text-xs p-2 border border-orange-200 rounded resize-none focus:ring-1 focus:ring-orange-400 outline-none bg-slate-100"/>
             </div>
           </div>
         )}

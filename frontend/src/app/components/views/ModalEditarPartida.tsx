@@ -89,7 +89,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-slate-100 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gray-50/50">
           <div>
@@ -111,7 +111,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
               />
             )}
           </div>
-          <button onClick={onClose} className="p-2 bg-white border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors shadow-sm">
+          <button onClick={onClose} className="p-2 bg-slate-100 border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors shadow-sm">
             <X size={18} />
           </button>
         </div>
@@ -131,7 +131,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                 name="descripcion"
                 value={formData.descripcion}
                 onChange={handleChange}
-                className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 required
               />
             </div>
@@ -144,7 +144,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                   name="unidad_medida"
                   value={formData.unidad_medida}
                   onChange={handleChange}
-                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 />
               </div>
               <div>
@@ -157,7 +157,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                     name="precio_unitario_base"
                     value={formData.precio_unitario_base}
                     onChange={handleChange}
-                    className="w-full text-sm pl-8 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                    className="w-full text-sm pl-8 p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                   />
                 </div>
               </div>
@@ -170,7 +170,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                   name="especialidad"
                   value={formData.especialidad}
                   onChange={handleChange}
-                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 >
                   <option value="">Seleccionar...</option>
                   {especialidades.map(esp => (
@@ -184,7 +184,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                   name="tipo_calculo"
                   value={formData.tipo_calculo}
                   onChange={handleChange}
-                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 >
                   <option value="ESTÁNDAR">Estándar</option>
                   <option value="ACERO">Acero Corrugado</option>
@@ -202,7 +202,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
                   value={formData.modificacion || ''}
                   onChange={handleChange}
                   placeholder="Ej: PC, ACT, M, A, PN5..."
-                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                  className="w-full text-sm p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                 />
               </div>
             </div>
@@ -228,7 +228,7 @@ export function ModalEditarPartida({ partida, onClose, isSuper, userEspecialidad
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors"
+              className="flex-1 py-3 bg-slate-100 border border-gray-200 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors"
             >
               Cancelar
             </button>

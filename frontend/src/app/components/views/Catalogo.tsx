@@ -305,7 +305,7 @@ export default function Catalogo() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex-1 overflow-auto" style={{ backgroundColor: '#E2E8F0' }}>
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-10">
             <tr>
@@ -492,7 +492,7 @@ export default function Catalogo() {
 
         {/* Pagination Controls */}
         {!isLoading && filteredData.length > itemsPerPage && (
-          <div className="flex items-center justify-between px-6 py-3 border-t bg-white flex-shrink-0" style={{ borderColor: '#F1F5F9' }}>
+          <div className="flex items-center justify-between px-6 py-3 border-t bg-slate-100 flex-shrink-0" style={{ borderColor: '#F1F5F9' }}>
             <span className="text-xs text-gray-500 font-medium">
               Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredData.length)} de {filteredData.length} partidas
             </span>

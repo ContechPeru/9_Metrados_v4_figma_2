@@ -1,0 +1,126 @@
+{
+  "name": "Generador Automático de Videos (Ollama local)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "video-input-ollama",
+        "options": {}
+      },
+      "id": "e2e99b0c-1234-4567-89ab-cdef01234567",
+      "name": "Webhook (Entrada de Guión)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "12345678-1234-1234-1234-123456789012"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama3\",\n  \"prompt\": \"Actúa como un experto productor de videos. Toma este guión y divídelo en escenas. Para cada escena, necesito el texto narrado y una descripción visual (prompt para generación de imagen/video) corta en inglés. Devuelve un objeto JSON estricto con el formato: { \\\"scenes\\\": [ { \\\"narrative\\\": \\\"...\\\", \\\"visual_prompt\\\": \\\"...\\\" } ] }\\n\\nGuión original:\\n{{ $json.body.script }}\",\n  \"stream\": false,\n  \"format\": \"json\"\n}",
+        "options": {}
+      },
+      "id": "76e33e6c-2222-3333-4444-555566667777",
+      "name": "Ollama (Estructurar Guión)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "textToSpeech",
+        "voice": "eleven_monolingual_v1",
+        "text": "={{ JSON.parse($json.response).scenes.map(s => s.narrative).join(' ') }}"
+      },
+      "id": "87a44f7d-4444-5555-6666-777788889999",
+      "name": "ElevenLabs (Voz en off)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer TU_API_KEY_AQUI"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template_id",
+              "value": "TU_TEMPLATE_ID_AQUI"
+            },
+            {
+              "name": "modifications",
+              "value": "={{ // Aquí irían mapeados los prompts visuales y el audio }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "98b55g8e-6666-7777-8888-999900001111",
+      "name": "Creatomate (Render Final)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        950,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook (Entrada de Guión)": {
+      "main": [
+        [
+          {
+            "node": "Ollama (Estructurar Guión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama (Estructurar Guión)": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs (Voz en off)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs (Voz en off)": {
+      "main": [
+        [
+          {
+            "node": "Creatomate (Render Final)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

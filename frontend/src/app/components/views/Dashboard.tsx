@@ -15,7 +15,7 @@ function KpiCard({
 }) {
   return (
     <div
-      className="flex flex-col p-5 rounded-xl border bg-white shadow-sm hover:shadow-md transition-shadow"
+      className="flex flex-col p-5 rounded-xl border bg-slate-100 shadow-sm hover:shadow-md transition-shadow"
       style={{ borderColor: '#E5E9F0' }}
     >
       <div className="flex items-start justify-between mb-4">
@@ -47,7 +47,7 @@ function KpiCard({
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border rounded-lg shadow-lg p-3" style={{ borderColor: '#E5E9F0', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+      <div className="bg-slate-100 border rounded-lg shadow-lg p-3" style={{ borderColor: '#E5E9F0', fontFamily: 'IBM Plex Sans, sans-serif' }}>
         <p className="font-semibold mb-2 text-sm" style={{ color: '#1A2B45' }}>{label}</p>
         {payload.map((entry: any) => (
           <div key={entry.name} className="flex items-center gap-2 text-xs">
@@ -114,7 +114,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-[#94A3B8]" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex flex-col items-center justify-center h-full text-[#94A3B8]" style={{ backgroundColor: '#E2E8F0' }}>
         <Loader2 size={32} className="animate-spin mb-4 text-[#1A6BFF]" />
         <span className="font-medium">Calculando métricas globales desde Supabase...</span>
       </div>
@@ -122,7 +122,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col h-full overflow-auto" style={{ backgroundColor: '#F4F6FA' }}>
+    <div className="flex flex-col h-full overflow-auto" style={{ backgroundColor: '#E2E8F0' }}>
       {/* Header */}
       <div
         className="flex items-center justify-between px-6 flex-shrink-0"
@@ -182,7 +182,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-3 gap-4">
           {/* Chart */}
-          <div className="col-span-2 bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+          <div className="col-span-2 bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h3 className="font-semibold text-sm" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
@@ -222,7 +222,7 @@ export default function Dashboard() {
           </div>
 
           {/* Actividad reciente */}
-          <div className="bg-white rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
+          <div className="bg-slate-100 rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
             <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: '#F1F5F9' }}>
               <h3 className="font-semibold text-sm" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                 Actividad Reciente

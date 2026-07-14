@@ -45,7 +45,7 @@ const MetradoRow = React.memo(({
       data-index={index}
       role="row" 
       aria-level={depth + 2} 
-      className={`transition-colors text-[10.5px] border-b border-slate-100/50 ${m.is_liberado ? 'bg-green-50 hover:bg-green-100 text-slate-800' : 'bg-amber-50/50 hover:bg-amber-100/50 text-slate-700'}`}
+      className={`transition-colors text-[10.5px] border-b border-blue-100/50 ${m.is_liberado ? 'bg-green-50 hover:bg-green-100 text-slate-800' : 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-700'}`}
     >
       <td className="px-1 py-1 text-center">
         <div 
@@ -287,16 +287,16 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
     const hasChildren = Object.keys(node.children).length > 0 || node.metrados.length > 0;
     
     // Estilos condicionales por nivel S10
-    let bgClass = 'bg-white';
+    let bgClass = 'bg-[#E0F2FE]';
     let textClass = 'text-slate-800';
     let fontClass = 'font-normal';
     
     if (node.partida.nivel_arbol === 1) {
-      bgClass = 'bg-slate-200 border-t-2 border-slate-300';
+      bgClass = 'bg-[#BAE6FD] border-t-2 border-[#7DD3FC]';
       textClass = 'text-slate-900';
       fontClass = 'font-bold';
     } else if (node.partida.es_agrupador) {
-      bgClass = 'bg-slate-50 border-t border-slate-200';
+      bgClass = 'bg-[#E0F2FE] border-t border-[#7DD3FC]';
       textClass = 'text-blue-900';
       fontClass = 'font-semibold';
     }
@@ -382,8 +382,8 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
 
   return (
     <div ref={parentRef} className="flex-1 overflow-auto relative rounded-lg border">
-      <table role="treegrid" aria-label="Planilla de Metrados" className="w-full text-left border-collapse whitespace-nowrap min-w-[1400px] bg-white">
-        <thead role="rowgroup" className="sticky top-0 z-10 bg-[#E2E8F0] shadow-sm">
+      <table role="treegrid" aria-label="Planilla de Metrados" className="w-full text-left border-collapse whitespace-nowrap min-w-[1400px] bg-[#E0F2FE]">
+        <thead role="rowgroup" className="sticky top-0 z-10 bg-[#BAE6FD] shadow-sm">
           <tr role="row">
             <th className="px-2 py-2.5 w-[30px] border-b border-slate-300 text-center">
               {viewMode === 'Detallada' && (
@@ -421,7 +421,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
             {viewMode === 'Detallada' && <th role="columnheader" className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 w-[70px]">Acciones</th>}
           </tr>
         </thead>
-        <tbody role="rowgroup" className="divide-y divide-slate-200/60 bg-white relative">
+        <tbody role="rowgroup" className="divide-y divide-slate-200/60 bg-[#E0F2FE] relative">
           {rowVirtualizer.getVirtualItems().length > 0 && (
             <tr><td style={{ height: `${rowVirtualizer.getVirtualItems()[0].start}px` }} colSpan={14} /></tr>
           )}
@@ -430,7 +430,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
             if (rowData.type === 'date') {
               return (
                 <tr role="row" key={virtualRow.key} ref={rowVirtualizer.measureElement} data-index={virtualRow.index}>
-                  <td colSpan={14} className="px-4 py-1.5 font-bold sticky left-0 z-10 shadow-sm" style={{ backgroundColor: '#F1F5F9', color: '#334155', borderTop: '2px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
+                  <td colSpan={14} className="px-4 py-1.5 font-bold sticky left-0 z-10 shadow-sm" style={{ backgroundColor: '#BAE6FD', color: '#334155', borderTop: '2px solid #7DD3FC', borderBottom: '1px solid #7DD3FC' }}>
                     <div className="flex items-center gap-2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80 text-blue-600"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                       <span style={{ fontFamily: 'IBM Plex Sans, sans-serif', fontSize: '11px', letterSpacing: '0.05em', color: '#1E293B' }}>

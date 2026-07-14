@@ -1,0 +1,194 @@
+{
+  "name": "Mega Generador Faceless Automático (YouTube Shorts)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days"
+            }
+          ]
+        }
+      },
+      "id": "11111111-2222-3333-4444-555555555555",
+      "name": "Schedule Trigger (Diario)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [ 100, 300 ]
+    },
+    {
+      "parameters": {
+        "path": "mega-video-manual",
+        "options": {}
+      },
+      "id": "22222222-3333-4444-5555-666666666666",
+      "name": "Webhook (Prueba Manual)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [ 100, 500 ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "prompt": "=Genera un guión corto (menos de 60 segundos) para un YouTube Short sobre un dato curioso e impactante de la historia o la ciencia. \n\nEl guión debe estar dividido en 3 escenas. Para cada escena devuelve el texto narrado y un prompt visual en inglés muy descriptivo para pasarlo a DALL-E 3 (estilo hiperrealista, cinemático).\n\nFormato JSON estricto: {\n  \"title\": \"Título del video para YouTube\",\n  \"scenes\": [\n    { \"narrative\": \"...\", \"visual_prompt\": \"...\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "33333333-4444-5555-6666-777777777777",
+      "name": "OpenAI (Guionista)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [ 400, 400 ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "prompt": "={{ $json.scenes[0].visual_prompt }}",
+        "size": "1024x1792",
+        "quality": "hd",
+        "style": "vivid"
+      },
+      "id": "44444444-5555-6666-7777-888888888888",
+      "name": "DALL-E 3 (Imagen 1)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [ 650, 200 ]
+    },
+    {
+      "parameters": {
+        "operation": "textToSpeech",
+        "voice": "eleven_multilingual_v2",
+        "text": "={{ $json.scenes.map(s => s.narrative).join(' ') }}"
+      },
+      "id": "55555555-6666-7777-8888-999999999999",
+      "name": "ElevenLabs (Voz en Off)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [ 650, 600 ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer TU_CREATOMATE_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template_id",
+              "value": "TU_TEMPLATE_ID"
+            },
+            {
+              "name": "modifications",
+              "value": "={{ \n{ \n  \"Voiceover\": $(\"ElevenLabs (Voz en Off)\").first().json.audio_url, \n  \"Background_1\": $(\"DALL-E 3 (Imagen 1)\").first().json.data[0].url \n} \n}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "66666666-7777-8888-9999-000000000000",
+      "name": "Creatomate (Render Final)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [ 900, 400 ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $(\"OpenAI (Guionista)\").first().json.title }}",
+        "description": "Video generado 100% con IA.",
+        "videoFile": "={{ $json.url }}",
+        "privacyStatus": "private"
+      },
+      "id": "77777777-8888-9999-0000-111111111111",
+      "name": "YouTube (Subida Automática)",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [ 1150, 400 ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Diario)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Guionista)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (Prueba Manual)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Guionista)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Guionista)": {
+      "main": [
+        [
+          {
+            "node": "DALL-E 3 (Imagen 1)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ElevenLabs (Voz en Off)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DALL-E 3 (Imagen 1)": {
+      "main": [
+        [
+          {
+            "node": "Creatomate (Render Final)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs (Voz en Off)": {
+      "main": [
+        [
+          {
+            "node": "Creatomate (Render Final)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creatomate (Render Final)": {
+      "main": [
+        [
+          {
+            "node": "YouTube (Subida Automática)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

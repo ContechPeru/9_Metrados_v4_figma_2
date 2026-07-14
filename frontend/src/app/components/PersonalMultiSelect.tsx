@@ -96,7 +96,7 @@ export function PersonalMultiSelect({ especialidadActual, cuadrillaFilter }: { e
 
         {/* Dropdown sugerencias buscador manual */}
         {sugerencias.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-40 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-slate-100 border border-gray-200 rounded shadow-lg z-50 max-h-40 overflow-y-auto">
             {sugerencias.map(o => (
               <div 
                 key={o.id}
@@ -130,7 +130,7 @@ export function PersonalMultiSelect({ especialidadActual, cuadrillaFilter }: { e
                 key={o.id}
                 type="button"
                 onClick={() => addObreroId(o.id)}
-                className="flex items-center gap-1 bg-white border border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 rounded pl-1.5 pr-2 py-0.5 text-left transition-colors"
+                className="flex items-center gap-1 bg-slate-100 border border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 rounded pl-1.5 pr-2 py-0.5 text-left transition-colors"
               >
                 <span className="text-gray-400 font-bold text-[10px]">+</span>
                 <span className="text-[10px] text-gray-600 font-medium">{o.nombres_completos}</span>

@@ -77,7 +77,7 @@ export function CuadrillaObrerosSelector({ obreros, selectedIds, onChange, cuadr
               <button 
                 type="button"
                 onClick={() => removeObreroId(o.id)}
-                className="p-0.5 bg-white hover:bg-blue-200 rounded-full text-blue-400 hover:text-blue-700 transition-colors border border-blue-100"
+                className="p-0.5 bg-slate-100 hover:bg-blue-200 rounded-full text-blue-400 hover:text-blue-700 transition-colors border border-blue-100"
               >
                 <X size={10} />
               </button>
@@ -98,7 +98,7 @@ export function CuadrillaObrerosSelector({ obreros, selectedIds, onChange, cuadr
         />
         
         {/* Toggle para ver a todos */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-white pl-2">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-slate-100 pl-2">
           <input 
             type="checkbox" 
             id="showAllObsCuad" 
@@ -113,7 +113,7 @@ export function CuadrillaObrerosSelector({ obreros, selectedIds, onChange, cuadr
 
         {/* Dropdown sugerencias buscador manual */}
         {sugerencias.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-slate-100 border border-gray-200 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
             {sugerencias.map(o => (
               <div 
                 key={o.id}

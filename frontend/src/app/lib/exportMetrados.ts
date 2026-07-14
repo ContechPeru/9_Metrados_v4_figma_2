@@ -83,6 +83,7 @@ const COLS: ColDef[] = [
   { key: 'frente_trabajo',       label: 'FRENTE',             width: 10, h: 'center' },
   { key: 'bloque_sector',        label: 'BLOQUE',             width: 9,  h: 'center' },
   { key: 'nivel_piso',           label: 'NIVEL\n(PISO)',      width: 8,  h: 'center' },
+  { key: 'ambiente',             label: 'SIST. /\nAMBIENTE',  width: 15, h: 'center' },
   { key: 'cuadrilla',            label: 'CUADRILLA',          width: 12, h: 'center' },
   { key: '_partida_desc',        label: 'PARTIDA',            width: 50, h: 'left'   },
   { key: '_detalle_completo',    label: 'DETALLE',            width: 32, h: 'left'   },
@@ -167,7 +168,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
   let q = supabase
     .from('registro_metrados')
     .select(`
-      grado, fecha_ejecucion, especialidad, frente_trabajo, bloque_sector,
+      grado, fecha_ejecucion, especialidad, frente_trabajo, ambiente, bloque_sector,
       nivel_piso, cuadrilla, elemento_desc, detalle_desc,
       snapshot_codigo, snapshot_descripcion,
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho,

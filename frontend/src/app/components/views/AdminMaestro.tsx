@@ -72,7 +72,7 @@ export default function AdminMaestro() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex flex-1 overflow-hidden" style={{ backgroundColor: '#E2E8F0' }}>
         {/* Sidebar tabs */}
         <div
           className="flex flex-col flex-shrink-0 border-r pt-4"
@@ -133,7 +133,7 @@ export default function AdminMaestro() {
           {/* Catálogo tab */}
           {activeTab === 'catalogo' && (
             <div className="space-y-4">
-              <div className="bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+              <div className="bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
                 <h3 className="font-semibold text-sm mb-4" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                   Configuración de Catálogo
                 </h3>
@@ -164,7 +164,7 @@ export default function AdminMaestro() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+              <div className="bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
                 <h3 className="font-semibold text-sm mb-4" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                   Toggles de Configuración
                 </h3>
@@ -185,7 +185,7 @@ export default function AdminMaestro() {
                         style={{ backgroundColor: item.enabled ? '#1A6BFF' : '#E2E8F0' }}
                       >
                         <div
-                          className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform"
+                          className="absolute top-0.5 w-4 h-4 rounded-full bg-slate-100 shadow-sm transition-transform"
                           style={{ left: item.enabled ? '22px' : '2px' }}
                         />
                       </div>
@@ -198,7 +198,7 @@ export default function AdminMaestro() {
 
           {/* Bitácora tab */}
           {activeTab === 'bitacora' && (
-            <div className="bg-white rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
+            <div className="bg-slate-100 rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
               <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: '#F1F5F9' }}>
                 <h3 className="font-semibold text-sm" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                   Bitácora del Sistema
@@ -255,7 +255,7 @@ export default function AdminMaestro() {
 
           {/* Dataset tab */}
           {activeTab === 'dataset' && (
-            <div className="bg-white rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
+            <div className="bg-slate-100 rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
               <div className="px-5 py-4 border-b" style={{ borderColor: '#F1F5F9' }}>
                 <h3 className="font-semibold text-sm" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                   Dataset del Proyecto
@@ -309,7 +309,7 @@ export default function AdminMaestro() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+              <div className="bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
                 <h3 className="font-semibold text-sm mb-4" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                   Partidas en Contingencia
                 </h3>

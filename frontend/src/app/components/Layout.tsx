@@ -10,7 +10,7 @@ function LayoutInner() {
   const showRightPanel = isMetradosRoute && rightPanelVisible;
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#F4F6FA' }}>
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#E2E8F0' }}>
       {/* ZONA A — Left Sidebar */}
       <LeftSidebar />
 

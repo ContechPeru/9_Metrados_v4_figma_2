@@ -215,7 +215,7 @@ export default function ImportacionCatalogo() {
             <>
               <button 
                 onClick={clearData}
-                className="px-4 py-2 flex items-center gap-2 rounded-lg bg-white border border-[#DDE3EC] text-[#5E748A] hover:bg-red-50 hover:text-red-600 transition-colors"
+                className="px-4 py-2 flex items-center gap-2 rounded-lg bg-slate-100 border border-[#DDE3EC] text-[#5E748A] hover:bg-red-50 hover:text-red-600 transition-colors"
               >
                 <Trash2 size={16} /> Limpiar
               </button>
@@ -239,7 +239,7 @@ export default function ImportacionCatalogo() {
         </div>
       ) : data.length === 0 ? (
         <div 
-          className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-xl transition-all ${isDragging ? 'border-[#1A6BFF] bg-[#E0E9F4]' : 'border-[#DDE3EC] bg-white'}`}
+          className={`flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-xl transition-all ${isDragging ? 'border-[#1A6BFF] bg-[#E0E9F4]' : 'border-[#DDE3EC] bg-slate-100'}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -266,21 +266,21 @@ export default function ImportacionCatalogo() {
       ) : (
         <div className="flex flex-col flex-1 min-h-0">
           <div className="flex gap-4 mb-4">
-            <div className="bg-white px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm">
+            <div className="bg-slate-100 px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm">
               <FileSpreadsheet className="text-[#1A6BFF]" size={20} />
               <div>
                 <div className="text-xs text-[#5E748A]">Total Filas</div>
                 <div className="font-semibold text-[#1E3A5F]">{data.length}</div>
               </div>
             </div>
-            <div className="bg-white px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm">
+            <div className="bg-slate-100 px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm">
               <CheckCircle2 className="text-emerald-500" size={20} />
               <div>
                 <div className="text-xs text-[#5E748A]">Listas para Sincronizar</div>
                 <div className="font-semibold text-emerald-600">{validCount}</div>
               </div>
             </div>
-            <div className={`bg-white px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm ${errorCount > 0 ? 'bg-red-50 border-red-200' : ''}`}>
+            <div className={`bg-slate-100 px-4 py-3 rounded-lg border border-[#DDE3EC] flex items-center gap-3 shadow-sm ${errorCount > 0 ? 'bg-red-50 border-red-200' : ''}`}>
               <AlertCircle className={errorCount > 0 ? "text-red-500" : "text-[#9BAFC4]"} size={20} />
               <div>
                 <div className={`text-xs ${errorCount > 0 ? 'text-red-500' : 'text-[#5E748A]'}`}>Bloqueos Críticos</div>
@@ -289,7 +289,7 @@ export default function ImportacionCatalogo() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#DDE3EC] rounded-xl overflow-hidden flex-1 flex flex-col shadow-sm">
+          <div className="bg-slate-100 border border-[#DDE3EC] rounded-xl overflow-hidden flex-1 flex flex-col shadow-sm">
             <div className="overflow-auto flex-1">
               <table className="w-full text-sm text-left whitespace-nowrap">
                 <thead className="bg-[#F8FAFC] text-[#5E748A] sticky top-0 border-b border-[#DDE3EC] z-10 shadow-sm">

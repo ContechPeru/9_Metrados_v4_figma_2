@@ -385,7 +385,7 @@ function Toggle({
       }}
     >
       <div
-        className="absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white transition-transform shadow-sm"
+        className="absolute top-0.5 w-3.5 h-3.5 rounded-full bg-slate-100 transition-transform shadow-sm"
         style={{ left: value ? "15px" : "2px" }}
       />
     </div>
@@ -2098,7 +2098,7 @@ export default function AdminPersonal() {
       <div className="flex flex-1 overflow-hidden bg-slate-50">
         {/* Sub-sidebar */}
         <div
-          className="hidden md:flex flex-col flex-shrink-0 border-r pt-4 pb-4 transition-all duration-200 bg-white border-slate-200 overflow-hidden"
+          className="hidden md:flex flex-col flex-shrink-0 border-r pt-4 pb-4 transition-all duration-200 bg-slate-100 border-slate-200 overflow-hidden"
           style={{ width: sidebarColapsado ? 40 : 180 }}
         >
           {/* Header sidebar con botón colapsar */}

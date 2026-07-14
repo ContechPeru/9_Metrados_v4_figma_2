@@ -48,7 +48,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden" style={{ backgroundColor: '#F4F6FA' }}>
+    <div className="flex h-screen w-screen overflow-hidden" style={{ backgroundColor: '#E2E8F0' }}>
 
       {/* ── LEFT PANEL — Branding ── */}
       <div
@@ -122,7 +122,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── RIGHT PANEL — Form ── */}
-      <div className="flex flex-1 items-center justify-center" style={{ backgroundColor: '#F4F6FA', padding: '32px 24px' }}>
+      <div className="flex flex-1 items-center justify-center" style={{ backgroundColor: '#E2E8F0', padding: '32px 24px' }}>
         <div style={{ width: '100%', maxWidth: 440 }}>
 
           {/* Mobile logo */}

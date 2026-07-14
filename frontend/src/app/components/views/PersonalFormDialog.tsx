@@ -155,7 +155,7 @@ export default function PersonalFormDialog({ isOpen, onClose, onSuccess, personT
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1527]/40 backdrop-blur-sm">
       <div 
-        className="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-2xl bg-slate-100 rounded-xl shadow-2xl overflow-hidden flex flex-col"
         style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}
       >
         {/* Header */}
@@ -212,7 +212,7 @@ export default function PersonalFormDialog({ isOpen, onClose, onSuccess, personT
                   name="especialidad" 
                   value={formData.especialidad} 
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-white"
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-slate-100"
                 >
                   <option value="">Seleccione especialidad...</option>
                   {especialidades.map(e => (
@@ -228,7 +228,7 @@ export default function PersonalFormDialog({ isOpen, onClose, onSuccess, personT
                   name="categoria_laboral" 
                   value={formData.categoria_laboral} 
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-white"
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-slate-100"
                 >
                   <option value="Operario">Operario</option>
                   <option value="Oficial">Oficial</option>
@@ -279,7 +279,7 @@ export default function PersonalFormDialog({ isOpen, onClose, onSuccess, personT
                   name="estado_contrato" 
                   value={formData.estado_contrato} 
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-white"
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-slate-100"
                 >
                   <option value="Activo">Activo</option>
                   <option value="Inactivo">Inactivo</option>
@@ -310,7 +310,7 @@ export default function PersonalFormDialog({ isOpen, onClose, onSuccess, personT
                   name="sexo" 
                   value={formData.sexo} 
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-white"
+                  className="w-full px-3 py-2 border border-[#CBD5E1] rounded-lg text-sm focus:outline-none focus:border-[#1A6BFF] focus:ring-1 focus:ring-[#1A6BFF] bg-slate-100"
                 >
                   <option value="M">Masculino</option>
                   <option value="F">Femenino</option>

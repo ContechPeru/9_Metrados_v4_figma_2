@@ -140,7 +140,7 @@ export default function DashboardEjecucion() {
         </div>
         
         {/* Barra de Filtros */}
-        <div className="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-3 bg-slate-100 p-2 rounded-lg border border-slate-200 shadow-sm">
           <select 
             value={selectedMonth} 
             onChange={e => setSelectedMonth(Number(e.target.value))}
@@ -191,15 +191,15 @@ export default function DashboardEjecucion() {
         <div className="flex flex-col gap-6">
           {/* KPIs */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
+            <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
               <span className="text-slate-500 text-sm font-medium">Valorizado del Mes ({meses[selectedMonth]})</span>
               <span className="text-3xl font-bold text-slate-800 mt-1">S/ {montoValorizado.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
+            <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
               <span className="text-slate-500 text-sm font-medium">Valorizado Acumulado Histórico</span>
               <span className="text-3xl font-bold text-blue-600 mt-1">S/ {montoAcumuladoTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
+            <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-center transition-transform hover:scale-[1.02]">
               <span className="text-slate-500 text-sm font-medium">Top Especialidad del Mes</span>
               <span className="text-3xl font-bold text-emerald-600 mt-1 truncate" title={topEspecialidad}>{topEspecialidad}</span>
             </div>
@@ -208,7 +208,7 @@ export default function DashboardEjecucion() {
           {/* Gráficos */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Curva S Semanal */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 col-span-2">
+            <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-5 col-span-2">
               <h3 className="text-slate-700 font-semibold mb-4">Evolución de Ejecución Semanal (Curva S Real)</h3>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -243,7 +243,7 @@ export default function DashboardEjecucion() {
             </div>
 
             {/* Dona de Especialidades */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-5">
               <h3 className="text-slate-700 font-semibold mb-4">Distribución por Especialidad</h3>
               <div className="h-72">
                 {dataEspecialidad.length > 0 ? (

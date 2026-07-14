@@ -105,7 +105,7 @@ export function ActiveUsers() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 p-2 bg-white border border-slate-200 shadow-xl rounded-xl z-50 flex flex-col min-w-[160px] animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full right-0 mt-2 p-2 bg-slate-100 border border-slate-200 shadow-xl rounded-xl z-50 flex flex-col min-w-[160px] animate-in fade-in zoom-in-95 duration-150">
           <div className="px-2 py-1 mb-1 border-b border-slate-100 flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>

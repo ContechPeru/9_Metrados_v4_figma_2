@@ -1,0 +1,5 @@
+Sincronización completada.
+Eliminadas: 1105
+Omitidas por tener metrados: 0
+Actualizadas (Modificaciones): 3119
+Nuevas Insertadas: 0

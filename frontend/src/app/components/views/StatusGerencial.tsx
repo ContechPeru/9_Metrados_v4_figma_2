@@ -14,7 +14,7 @@ function fmt(n: number) {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border rounded-lg shadow-lg p-3" style={{ borderColor: '#E5E9F0', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+      <div className="bg-slate-100 border rounded-lg shadow-lg p-3" style={{ borderColor: '#E5E9F0', fontFamily: 'IBM Plex Sans, sans-serif' }}>
         <p className="font-semibold mb-2 text-sm" style={{ color: '#1A2B45' }}>{label}</p>
         {payload.map((entry: any) => (
           <div key={entry.name} className="flex items-center gap-2 text-xs mb-1">
@@ -82,7 +82,7 @@ export default function StatusGerencial() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-[#94A3B8]" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex flex-col items-center justify-center h-full text-[#94A3B8]" style={{ backgroundColor: '#E2E8F0' }}>
         <Loader2 size={32} className="animate-spin mb-4 text-[#1A6BFF]" />
         <span className="font-medium">Calculando status gerencial desde Supabase...</span>
       </div>
@@ -117,7 +117,7 @@ export default function StatusGerencial() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-6 space-y-6" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex-1 overflow-auto p-6 space-y-6" style={{ backgroundColor: '#E2E8F0' }}>
         {/* Summary KPIs */}
         <div className="grid grid-cols-3 gap-4">
           {[
@@ -125,7 +125,7 @@ export default function StatusGerencial() {
             { label: 'Ejecutado a la Fecha', value: `S/ ${(totalEjecutado / 1e6).toFixed(2)}M`, sub: `${totalPct}% del presupuesto`, color: '#22C55E', icon: TrendingUp },
             { label: 'Saldo por Ejecutar', value: `S/ ${((totalPresupuesto - totalEjecutado) / 1e6).toFixed(2)}M`, sub: 'Pendiente de valorización', color: '#F59E0B', icon: TrendingDown },
           ].map(card => (
-            <div key={card.label} className="bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+            <div key={card.label} className="bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -149,7 +149,7 @@ export default function StatusGerencial() {
 
         <div className="grid grid-cols-5 gap-4">
           {/* Comparison Table */}
-          <div className="col-span-3 bg-white rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
+          <div className="col-span-3 bg-slate-100 rounded-xl border shadow-sm overflow-hidden" style={{ borderColor: '#E5E9F0' }}>
             <div className="px-5 py-4 border-b" style={{ borderColor: '#F1F5F9' }}>
               <h3 className="font-semibold text-sm" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
                 Valorización por Especialidad
@@ -262,7 +262,7 @@ export default function StatusGerencial() {
           </div>
 
           {/* Radar chart */}
-          <div className="col-span-2 bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+          <div className="col-span-2 bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
             <h3 className="font-semibold text-sm mb-1" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
               Radar de Avance vs Meta
             </h3>
@@ -295,7 +295,7 @@ export default function StatusGerencial() {
         </div>
 
         {/* Bar chart */}
-        <div className="bg-white rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
+        <div className="bg-slate-100 rounded-xl border p-5 shadow-sm" style={{ borderColor: '#E5E9F0' }}>
           <h3 className="font-semibold text-sm mb-4" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif' }}>
             Comparativo Presupuesto vs Ejecutado (S/)
           </h3>

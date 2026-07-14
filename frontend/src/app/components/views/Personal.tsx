@@ -19,7 +19,7 @@ function DetailPanel({ person, onClose, onEdit, onDelete }: { person: Personal; 
   const estadoCfg = ESTADO_CONFIG[person.estado];
   return (
     <div
-      className="flex flex-col h-full border-l bg-white border-slate-200 w-full md:w-[300px]"
+      className="flex flex-col h-full border-l bg-slate-100 border-slate-200 w-full md:w-[300px]"
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
         <span className="font-semibold text-sm text-slate-800">
@@ -85,7 +85,7 @@ function DetailPanel({ person, onClose, onEdit, onDelete }: { person: Personal; 
         </button>
         <button
           onClick={onDelete}
-          className="w-full py-3 rounded-lg text-xs font-semibold border bg-white border-red-500 text-red-500 hover:bg-red-50 transition-colors"
+          className="w-full py-3 rounded-lg text-xs font-semibold border bg-slate-100 border-red-500 text-red-500 hover:bg-red-50 transition-colors"
         >
           Dar de baja
         </button>
@@ -231,7 +231,7 @@ export default function Personal() {
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div
-        className="flex items-center justify-between px-6 flex-shrink-0 h-14 bg-white border-b border-slate-200"
+        className="flex items-center justify-between px-6 flex-shrink-0 h-14 bg-slate-100 border-b border-slate-200"
       >
         <div className="flex items-center gap-4">
           <h1 className="font-bold mr-4 text-slate-800 text-[15px]">
@@ -240,13 +240,13 @@ export default function Personal() {
           <div className="flex bg-[#F1F5F9] rounded-lg p-1">
             <button
               onClick={() => setActiveTab('Obreros')}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${activeTab === 'Obreros' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${activeTab === 'Obreros' ? 'bg-slate-100 shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
             >
               Obreros
             </button>
             <button
               onClick={() => setActiveTab('Cuadrillas')}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${activeTab === 'Cuadrillas' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${activeTab === 'Cuadrillas' ? 'bg-slate-100 shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
             >
               Cuadrillas
             </button>
@@ -276,10 +276,10 @@ export default function Personal() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden" style={{ backgroundColor: '#F4F6FA' }}>
+      <div className="flex flex-1 overflow-hidden" style={{ backgroundColor: '#E2E8F0' }}>
         {/* SHARED SIDEBAR */}
         <div
-          className="hidden md:flex flex-col flex-shrink-0 border-r overflow-y-auto bg-white border-slate-200 w-[220px]"
+          className="hidden md:flex flex-col flex-shrink-0 border-r overflow-y-auto bg-slate-100 border-slate-200 w-[220px]"
         >
           <div className="px-4 py-3 border-b border-slate-100">
             <div className="text-xs font-semibold text-slate-500">
@@ -341,7 +341,7 @@ export default function Personal() {
           <div className="flex flex-col flex-1 overflow-hidden">
             {/* Search bar */}
             <div
-              className="flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b bg-white border-slate-200"
+              className="flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b bg-slate-100 border-slate-200"
             >
               <div className="relative flex-1">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#94A3B8' }} />
@@ -366,7 +366,7 @@ export default function Personal() {
                     {filteredCuadrillas.map(c => {
                       const members = obreros.filter(o => o.cuadrillas_asignadas?.includes(c.nombre));
                       return (
-                        <div key={c.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex flex-col hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group" onClick={() => handleEditCuadrilla(c)}>
+                        <div key={c.id} className="bg-slate-100 rounded-xl border border-gray-200 p-5 shadow-sm flex flex-col hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group" onClick={() => handleEditCuadrilla(c)}>
                           <div className="flex justify-between items-start border-b border-gray-100 pb-3 mb-4">
                             <div>
                               <h3 className="font-bold text-gray-800 text-[15px] group-hover:text-blue-600 transition-colors flex items-center gap-1.5">
@@ -449,7 +449,7 @@ export default function Personal() {
                         <tr
                           key={p.id}
                           onClick={() => setSelected(isSelected ? null : p)}
-                          className={`cursor-pointer transition-colors border-b border-slate-100 ${isSelected ? 'bg-blue-50' : idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-slate-100`}
+                          className={`cursor-pointer transition-colors border-b border-slate-100 ${isSelected ? 'bg-blue-50' : idx % 2 === 0 ? 'bg-slate-100' : 'bg-slate-50'} hover:bg-slate-100`}
                         >
                           <td className="px-4 py-3">
                             <span className="font-mono text-[11px] text-blue-600 font-medium">

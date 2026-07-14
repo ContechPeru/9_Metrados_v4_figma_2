@@ -359,7 +359,7 @@ function UnifiedDateFilter({
                     setPeriod('todo');
                     setDateRange({...dateRange, start: e.target.value});
                   }} 
-                  className="w-full border border-gray-200 rounded-md px-2 py-1 text-xs outline-none focus:border-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors" 
+                  className="w-full border border-gray-200 rounded-md px-2 py-1 text-xs outline-none focus:border-blue-500 text-gray-700 bg-gray-50 focus:bg-slate-100 transition-colors" 
                 />
               </div>
               <div>
@@ -371,7 +371,7 @@ function UnifiedDateFilter({
                     setPeriod('todo');
                     setDateRange({...dateRange, end: e.target.value});
                   }} 
-                  className="w-full border border-gray-200 rounded-md px-2 py-1 text-xs outline-none focus:border-blue-500 text-gray-700 bg-gray-50 focus:bg-white transition-colors" 
+                  className="w-full border border-gray-200 rounded-md px-2 py-1 text-xs outline-none focus:border-blue-500 text-gray-700 bg-gray-50 focus:bg-slate-100 transition-colors" 
                 />
               </div>
             </div>
@@ -973,13 +973,13 @@ export default function Metrados() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#F4F6FA] min-w-0">
+    <div className="flex-1 flex flex-col h-full bg-[#E0F2FE] min-w-0">
       
       {/* ── TOPBAR 1 ──────────────────────────────────────── */}
-      <div className="flex items-center px-4 flex-shrink-0 gap-3 2xl:gap-5" style={{ height: 56, backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E9F0', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+      <div className="flex items-center px-4 flex-shrink-0 gap-3 2xl:gap-5" style={{ height: 56, backgroundColor: '#1E3A5F', borderBottom: '1px solid #1E3A5F', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
         <div className="flex items-center gap-2.5 flex-shrink-0">
-          <h1 className="font-bold whitespace-nowrap" style={{ color: '#1A2B45', fontFamily: 'DM Sans, sans-serif', fontSize: '15px' }}>
-            Planilla de Metrados Dinámica
+          <h1 className="font-bold whitespace-nowrap" style={{ color: '#FFFFFF', fontFamily: 'DM Sans, sans-serif', fontSize: '15px' }}>
+            Planilla de Metrados Reg
           </h1>
         </div>
 
@@ -994,8 +994,8 @@ export default function Metrados() {
                   onClick={() => setContextoTab(tab)}
                   className={`px-2.5 py-1 rounded-full text-[11px] transition-all flex items-center gap-1.5 ${
                     isActive 
-                      ? 'bg-white text-[#1A2B45] font-bold shadow-sm ring-1 ring-black/5' 
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                      ? 'bg-slate-100 text-[#1A2B45] font-bold shadow-sm ring-1 ring-black/5' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-slate-100/50'
                   }`}
                   style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}
                 >
@@ -1046,7 +1046,7 @@ export default function Metrados() {
           </div>
         </div>
 
-        <div className="flex items-center rounded-full border border-gray-200 bg-white p-0.5 shadow-sm flex-shrink-0">
+        <div className="flex items-center rounded-full border border-gray-200 bg-slate-100 p-0.5 shadow-sm flex-shrink-0">
           <UnifiedDateFilter period={period} setPeriod={setPeriod} dateRange={dateRange} setDateRange={setDateRange} />
         </div>
 
@@ -1058,7 +1058,7 @@ export default function Metrados() {
               placeholder="Buscar frente, código, obrero..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 w-full bg-gray-50 hover:bg-white transition-colors"
+              className="pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 w-full bg-gray-50 hover:bg-slate-100 transition-colors"
             />
           </div>
         </div>
@@ -1099,7 +1099,7 @@ export default function Metrados() {
               <button
                 onClick={() => handleLiberarMasivo(false)}
                 disabled={isSubmittingMasivo}
-                className="flex items-center justify-center gap-1 px-3 py-1.5 min-w-[70px] min-h-[32px] rounded text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 transition-colors text-[11px] font-bold disabled:opacity-50"
+                className="flex items-center justify-center gap-1 px-3 py-1.5 min-w-[70px] min-h-[32px] rounded text-slate-600 bg-slate-100 hover:bg-slate-100 border border-slate-200 transition-colors text-[11px] font-bold disabled:opacity-50"
               >
                 Revertir
               </button>
@@ -1176,9 +1176,9 @@ export default function Metrados() {
       </div>
 
       {/* ── CONTENIDO TABLA ───────────────────────────────────────── */}
-      <div className="flex-1 overflow-auto bg-white relative">
+      <div className="flex-1 overflow-auto bg-slate-100 relative">
         {isLoading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="absolute inset-0 bg-slate-100/50 backdrop-blur-sm z-10 flex items-center justify-center">
             <Loader2 className="animate-spin text-blue-500" size={32} />
           </div>
         )}
