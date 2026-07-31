@@ -8,7 +8,7 @@ import { formulaRegistry, EstandarStrategy } from '../../utils/formulas/strategi
 // ----------------------
 
 export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: string | null) {
-  const { addMetrado, updateMetrado, proyectos, factoresHvac, editingMetrado, setEditingMetrado } = useMetradosStore();
+  const { addMetrado, updateMetrado, proyectos, factoresHvac, editingMetrado, setEditingMetrado, partidas } = useMetradosStore();
   const { obreros, selectedObrerosIds, setSelectedObrerosIds } = usePersonalStore();
   const { isLiquidaciones, user } = useAuthStore();
   
@@ -44,7 +44,8 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
     planoEsp: '',
     planoSist: '',
     planoTipo: '',
-    planoNum: ''
+    planoNum: '',
+    observacion: ''
   });
 
   const [selectedPartida, setSelectedPartida] = useState<any>(null);
@@ -77,12 +78,18 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
         obsSinPlano: editingMetrado.obs_detalle ?? '',
         planoSist: editingMetrado.plano_sist ?? '',
         planoNum: editingMetrado.plano_num ?? '',
-        planoEsp: editingMetrado.plano_esp ?? ''
+        planoEsp: editingMetrado.plano_esp ?? '',
+        observacion: editingMetrado.observacion ?? ''
       }));
       
-      let tipo = 'Estandar';
-      if (editingMetrado.acero_diametro) tipo = 'Acero';
-      else if (editingMetrado.hvac_item_id) tipo = 'HVAC';
+      const partidaDB = partidas.find(p => p.id === editingMetrado.partida_id);
+      let tipo = partidaDB?.tipo_calculo || 'Estandar';
+      
+      // Fallback
+      if (tipo === 'Estandar') {
+        if (editingMetrado.acero_diametro) tipo = 'Acero';
+        else if (editingMetrado.hvac_item_id) tipo = 'HVAC';
+      }
       
       setSelectedPartida({
         id: editingMetrado.partida_id,
@@ -159,7 +166,7 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
   }, []);
 
   const limpiarCamposNum = useCallback(() => {
-    setValues(prev => ({ ...prev, cant: 1, long: 0, ancho: 0, alt: 0 }));
+    setValues(prev => ({ ...prev, cant: 1, long: 0, ancho: 0, alt: 0, observacion: '' }));
   }, []);
 
   const procesarRegistro = async () => {
@@ -220,7 +227,8 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
       sin_plano: values.sinPlano || false,
       obs_motivo: values.motivoSinPlano || null,
       obs_detalle: values.obsSinPlano || null,
-      plano_esp: values.planoEsp || null
+      plano_esp: values.planoEsp || null,
+      observacion: values.observacion || null
     };
 
     let result;
@@ -236,6 +244,9 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
       if (!values.sinPlano && values.planoSist && values.planoNum && selectedPartida) {
         localStorage.setItem(`planoSist_${selectedPartida.id}`, values.planoSist);
         localStorage.setItem(`planoNum_${selectedPartida.id}`, values.planoNum);
+      }
+      if (values.observacion) {
+        localStorage.setItem('last_observacion', values.observacion);
       }
       
       limpiarCamposNum();

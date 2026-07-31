@@ -25,7 +25,7 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
     const numAncho = editValues.ancho;
     const numAlt = editValues.alt;
     
-    const hasDims = numLong > 0 || numAncho > 0 || numAlt > 0;
+    const hasDims = numLong !== 0 || numAncho !== 0 || numAlt !== 0;
     const parcial = hasDims ? numCant * (numLong || 1) * (numAncho || 1) * (numAlt || 1) : numCant;
     const total = parcial * editValues.veces;
 

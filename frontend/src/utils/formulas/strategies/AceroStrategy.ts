@@ -12,8 +12,7 @@ export const PESOS_ACERO: Record<string, number> = {
 export const AceroStrategy: FormulaStrategy = {
   // En acero, normalmente bloqueamos el empalme a menos que sea un usuario con rol (simplificaremos esto por ahora dejando libre o manejado externamente)
   isFieldLocked: (f, extraData) => {
-    // Si el campo es 'ancho' (Empalme) y el usuario no es de liquidaciones, se bloquea.
-    if (f === 'ancho' && extraData?.isLiquidaciones !== true) return true;
+    // Permitir la edición del empalme para todos (solicitado por el usuario)
     return false;
   }, 
   

@@ -20,10 +20,10 @@ export const HvacStrategy: FormulaStrategy = {
     
     // La longitud solo cuenta si es Ducto o Codo
     const usesLong = hvacItemType.includes('CODO') || hvacItemType.includes('DUCTO');
-    const l = usesLong ? (v.long > 0 ? v.long : 1) : 1;
+    const l = usesLong ? (v.long !== 0 ? v.long : 1) : 1;
     
-    const a = v.ancho > 0 ? v.ancho : 1;
-    const h = v.alt > 0 ? v.alt : 1;
+    const a = v.ancho !== 0 ? v.ancho : 1;
+    const h = v.alt !== 0 ? v.alt : 1;
     
     // Multiplicación final con factor secreto
     return c * l * a * h * hvacFactor;

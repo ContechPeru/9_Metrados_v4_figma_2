@@ -105,6 +105,7 @@ export interface Database {
           obs_motivo: string | null
           obs_detalle: string | null
           plano_esp: string | null
+          observacion: string | null
         }
         Insert: {
           id?: string

@@ -45,7 +45,7 @@ const MetradoRow = React.memo(({
       data-index={index}
       role="row" 
       aria-level={depth + 2} 
-      className={`transition-colors text-[10.5px] border-b border-blue-100/50 ${m.is_liberado ? 'bg-green-50 hover:bg-green-100 text-slate-800' : 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-700'}`}
+      className={`transition-colors text-[10.5px] border-b border-green-100/50 ${m.is_liberado ? 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-800' : 'bg-emerald-50 hover:bg-emerald-100 text-slate-700'}`}
     >
       <td className="px-1 py-1 text-center">
         <div 
@@ -65,31 +65,34 @@ const MetradoRow = React.memo(({
         {m.fecha_ejecucion ? `${m.fecha_ejecucion.split('-')[2]}/${m.fecha_ejecucion.split('-')[1]}` : ''}
       </td>
       
-      <td className="px-3 py-1.5 whitespace-nowrap">
-        <div className="flex items-center gap-1 pl-8 opacity-80">
+      <td className="px-1.5 py-1.5">
+        <div className="flex items-center flex-wrap gap-1 pl-8 opacity-80">
           {m.frente_trabajo && m.frente_trabajo !== '-' && <span className="bg-slate-200 px-1.5 rounded text-[9px] font-bold text-slate-600" title="Frente de Trabajo">{m.frente_trabajo}</span>}
           {m.bloque_sector && m.bloque_sector !== '-' && <span className="bg-slate-200 px-1.5 rounded text-[9px] font-bold text-slate-600" title="Bloque/Sector">{m.bloque_sector}</span>}
           {m.nivel_piso && m.nivel_piso !== '-' && <span className="bg-slate-200 px-1.5 rounded text-[9px] font-bold text-slate-600" title="Nivel/Piso">{m.nivel_piso}</span>}
           {m.ambiente && m.ambiente !== '-' && <span className="bg-emerald-100 px-1.5 rounded text-[9px] font-bold text-emerald-700" title="Ambiente / Sistema">{m.ambiente}</span>}
+          {m.plano_num && m.plano_num !== '-' && <span className="bg-emerald-100 px-1.5 rounded text-[9px] font-bold text-emerald-700" title="N° Plano">{m.plano_num}</span>}
+          {m.observacion && <span className="bg-red-100 px-1.5 rounded text-[9px] font-bold text-red-700 cursor-help" title={m.observacion}>OBS</span>}
         </div>
       </td>
-      <td className="px-3 py-1.5 pl-10 text-slate-600 italic">
+      <td className="px-1.5 py-1.5 pl-10 text-slate-600 italic whitespace-normal break-words leading-tight">
         {m.elemento_desc} {m.detalle_desc ? `- ${m.detalle_desc}` : ''}
       </td>
       
-      <td className="px-3 py-1.5 text-center opacity-60">{m.unidad}</td>
+      <td className="px-1.5 py-1.5 text-center opacity-60">{m.unidad}</td>
       
       {/* Celdas numéricas con fuente Mono */}
-      <td className="px-3 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_largo_area || '-'}</td>
-      <td className="px-3 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_ancho_empalme || '-'}</td>
-      <td className="px-3 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_alto_gancho || '-'}</td>
-      <td className="px-3 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.resultado_parcial?.toFixed(2) || '-'}</td>
+      <td className="px-1.5 py-1.5 text-center opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.cantidad_elementos || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_largo_area || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_ancho_empalme || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_alto_gancho || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.resultado_parcial?.toFixed(2) || '-'}</td>
       
-      <td className="px-3 py-1.5 text-center font-medium opacity-80 truncate max-w-[100px]">{m.autor_nombre?.split(' ')[0] || m.firma_ingeniero || '-'}</td>
+      <td className="px-1.5 py-1.5 text-center font-medium opacity-80 truncate max-w-[100px]">{m.autor_nombre?.split(' ')[0] || m.firma_ingeniero || '-'}</td>
       
-      <td className="px-3 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.nro_repeticiones || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.nro_repeticiones || '-'}</td>
       
-      <td className="px-3 py-1.5 text-left opacity-90 border-l border-slate-100/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+      <td className="px-1.5 py-1.5 text-left opacity-90 border-l border-slate-100/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
         {m.resultado_total ? m.resultado_total.toFixed(2) : '-'}
       </td>
       
@@ -139,7 +142,7 @@ interface TreeNode {
 export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete, selectedIds = new Set(), onToggleSelection, onSelectAll, groupByDate = 'none', viewMode = 'Detallada' }: MetradosTreeGridProps) {
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
   const { toggleLiberarMetrado } = useMetradosStore();
-  const { canEditMetrado, canLiberarMetrados } = useAuthStore();
+  const { canEditMetrado, canLiberarMetrados, isLiquidaciones } = useAuthStore();
 
   const handleToggleLiberar = async (m: MetradoRecord) => {
     await toggleLiberarMetrado(m.id, !m.is_liberado);
@@ -287,17 +290,17 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
     const hasChildren = Object.keys(node.children).length > 0 || node.metrados.length > 0;
     
     // Estilos condicionales por nivel S10
-    let bgClass = 'bg-[#E0F2FE]';
-    let textClass = 'text-slate-800';
+    let bgClass = 'bg-white';
+    let textClass = 'text-slate-700';
     let fontClass = 'font-normal';
-    
-    if (node.partida.nivel_arbol === 1) {
-      bgClass = 'bg-[#BAE6FD] border-t-2 border-[#7DD3FC]';
-      textClass = 'text-slate-900';
+
+    if (node.partida.es_agrupador) {
+      bgClass = 'bg-emerald-50 border-t-2 border-emerald-200';
+      textClass = 'text-emerald-900';
       fontClass = 'font-bold';
-    } else if (node.partida.es_agrupador) {
-      bgClass = 'bg-[#E0F2FE] border-t border-[#7DD3FC]';
-      textClass = 'text-blue-900';
+    } else if (hasChildren) {
+      bgClass = 'bg-white border-t border-emerald-100';
+      textClass = 'text-emerald-900';
       fontClass = 'font-semibold';
     }
 
@@ -320,7 +323,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         )}
         
         {/* Item (con sangría) */}
-        <td className="px-3 py-2 border-b border-slate-200 whitespace-nowrap" style={{ paddingLeft: `${Math.max(12, depth * 20)}px` }}>
+        <td className="px-1.5 py-2 border-b border-slate-200 truncate" style={{ paddingLeft: `${Math.max(12, depth * 20)}px` }}>
           <div className="flex items-center gap-1">
             {hasChildren ? (
               <button onClick={() => toggleExpand(node.partida.id)} className="p-0.5 hover:bg-black/10 rounded cursor-pointer">
@@ -332,45 +335,45 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         </td>
         
         {/* Descripción */}
-        <td className="px-3 py-2 border-b border-slate-200 min-w-[300px] whitespace-normal">
+        <td className="px-1.5 py-2 border-b border-slate-200 whitespace-normal break-words leading-tight">
           {node.partida.modificacion && <span className="font-bold text-blue-600 mr-2 text-[10.5px]">[{node.partida.modificacion}]</span>}
           <span className="font-semibold text-slate-800 text-[10.5px] uppercase tracking-wide">{node.partida.descripcion}</span>
         </td>
         
         {/* Unidad */}
-        <td className="px-3 py-2 border-b border-slate-200 text-center text-slate-500 font-medium">
+        <td className="px-1.5 py-2 border-b border-slate-200 text-center text-slate-500 font-medium">
           {isAgrupador ? '' : node.partida.unidad_medida}
         </td>
         
         {isDetallada && (
           <>
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* Largo */}
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* Ancho */}
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* Alto */}
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* Parcial */}
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* Autor */}
-            <td className="px-3 py-2 border-b border-slate-200"></td> {/* N Veces */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Largo */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Ancho */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Alto */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Parcial */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Autor */}
+            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* N Veces */}
           </>
         )}
         
         {/* Parcial Totalizado Bottom-Up */}
-        <td className="px-3 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+        <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
           {node.parcialTotal > 0 ? node.parcialTotal.toFixed(2) : ''}
         </td>
 
         {isValorizada && (
           <>
-            <td className="px-3 py-2 border-b border-slate-200 text-right text-slate-600 font-medium">
+            <td className="px-1.5 py-2 border-b border-slate-200 text-right text-slate-600 font-medium">
               {isAgrupador ? '' : `S/ ${precio.toFixed(2)}`}
             </td>
-            <td className="px-3 py-2 border-b border-slate-200 text-right font-bold text-emerald-700" style={{ fontFamily: 'JetBrains Mono, monospace', backgroundColor: montoTotal > 0 ? '#ECFDF5' : 'transparent' }}>
+            <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-emerald-700" style={{ fontFamily: 'JetBrains Mono, monospace', backgroundColor: montoTotal > 0 ? '#ECFDF5' : 'transparent' }}>
               {montoTotal > 0 ? `S/ ${montoTotal.toLocaleString('es-PE', { minimumFractionDigits: 2 })}` : ''}
             </td>
           </>
         )}
         
         {/* Acciones */}
-        {isDetallada && <td className="px-3 py-2 border-b border-slate-200"></td>}
+        {isDetallada && <td className="px-1.5 py-2 border-b border-slate-200"></td>}
       </tr>
     );
   };
@@ -382,10 +385,10 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
 
   return (
     <div ref={parentRef} className="flex-1 overflow-auto relative rounded-lg border">
-      <table role="treegrid" aria-label="Planilla de Metrados" className="w-full text-left border-collapse whitespace-nowrap min-w-[1400px] bg-[#E0F2FE]">
-        <thead role="rowgroup" className="sticky top-0 z-10 bg-[#BAE6FD] shadow-sm">
+      <table role="treegrid" aria-label="Planilla de Metrados" className="w-full text-left border-collapse table-fixed bg-white text-[11px] min-w-[1000px]">
+        <thead role="rowgroup" className="sticky top-0 z-10 bg-[#ecfdf5] shadow-sm">
           <tr role="row">
-            <th className="px-2 py-2.5 w-[30px] border-b border-slate-300 text-center">
+            <th className="px-2 py-2.5 w-[30px] border-b border-[#a7f3d0] text-center">
               {viewMode === 'Detallada' && (
                 <input 
                   type="checkbox"
@@ -393,35 +396,36 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
                     if (e.target.checked) onSelectAll?.(metrados.map(m => m.id));
                     else onSelectAll?.([]);
                   }}
-                  className="w-3 h-3 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  className="w-3 h-3 rounded border-[#a7f3d0] text-[#059669] focus:ring-[#10b981] cursor-pointer"
                 />
               )}
             </th>
-            {viewMode === 'Detallada' && <th className="px-1 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 w-[40px] text-center">Fecha</th>}
-            <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 w-[120px]">Item</th>
-            <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 min-w-[300px]">Descripción</th>
-            <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-center w-[50px]">Und</th>
+            {viewMode === 'Detallada' && <th className="px-1 py-2.5 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] w-[40px] text-center">Fecha</th>}
+            <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] w-[140px]">Item</th>
+            <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0]">Descripción</th>
+            <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-center w-[40px]">Und</th>
             {viewMode === 'Detallada' && (
               <>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[70px]">Largo/Área</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[70px]">Ancho</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[70px]">Alto/Gancho</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[80px]">Parcial</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 w-[100px] text-center">Autor</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[60px]">N° Veces</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-center w-[40px]">Cant.</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[60px]">Largo</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[60px]">Ancho</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[60px]">Alto</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[60px]">Parcial</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] w-[70px] text-center">Autor</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[50px]">Veces</th>
               </>
             )}
-            <th className="px-3 py-2.5 text-[10px] font-bold text-slate-800 uppercase tracking-wider border-b border-slate-300 text-left w-[90px] bg-[#CBD5E1]">Total Met.</th>
+            <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-left w-[70px] bg-[#d1fae5]">Total Met.</th>
             {viewMode === 'Valorizada' && (
               <>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 text-right w-[80px]">P. Unitario</th>
-                <th className="px-3 py-2.5 text-[10px] font-bold text-emerald-800 uppercase tracking-wider border-b border-slate-300 text-right w-[100px] bg-emerald-100">Monto</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[60px]">P. Unit</th>
+                <th className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] text-right w-[80px] bg-[#a7f3d0]">Monto</th>
               </>
             )}
-            {viewMode === 'Detallada' && <th role="columnheader" className="px-3 py-2.5 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-300 w-[70px]">Acciones</th>}
+            {viewMode === 'Detallada' && <th role="columnheader" className="px-1.5 py-2 text-[10px] font-bold text-[#064e3b] uppercase tracking-wider border-b border-[#a7f3d0] w-[60px]">Acciones</th>}
           </tr>
         </thead>
-        <tbody role="rowgroup" className="divide-y divide-slate-200/60 bg-[#E0F2FE] relative">
+        <tbody role="rowgroup" className="divide-y divide-gray-100 bg-white relative">
           {rowVirtualizer.getVirtualItems().length > 0 && (
             <tr><td style={{ height: `${rowVirtualizer.getVirtualItems()[0].start}px` }} colSpan={14} /></tr>
           )}
@@ -477,10 +481,12 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
             <tr style={{ background: 'linear-gradient(180deg, #D8DCE5 0%, #C8CDD8 100%)', borderTop: '2px solid #10B981', boxShadow: '0 -2px 8px rgba(0,0,0,0.06)' }}>
               <td colSpan={5} className="px-3 py-2.5">
                 <div className="flex items-center gap-2 justify-end">
-                  <span style={{ color: '#064E3B', fontFamily: 'IBM Plex Sans, sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>TOTAL VALORIZADO ACUMULADO</span>
+                  <span style={{ color: '#064E3B', fontFamily: 'IBM Plex Sans, sans-serif', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    {isLiquidaciones() ? 'TOTAL VALORIZADO LIQUIDACIÓN' : 'TOTAL VALORIZADO ACUMULADO'}
+                  </span>
                 </div>
               </td>
-              <td className="px-3 py-2.5 text-right" colSpan={2}>
+              <td className="px-1.5 py-2.5 text-right" colSpan={2}>
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#047857', fontWeight: 800 }}>
                   S/ {Object.values(treesByDate).flat().reduce((sum, n) => sum + (n.parcialTotal * (n.partida.precio_unitario_base || 0)), 0).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                 </span>

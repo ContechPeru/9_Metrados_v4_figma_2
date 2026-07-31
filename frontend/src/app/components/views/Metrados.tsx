@@ -699,11 +699,11 @@ export default function Metrados() {
           monday.setDate(monday.getDate() - 7);
         }
         
-        const saturday = new Date(monday);
-        saturday.setDate(monday.getDate() + 5);
+        const endOfWeek = new Date(monday);
+        endOfWeek.setDate(monday.getDate() + 6); // End on Sunday
         
         startStr = `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}`;
-        endStr = `${saturday.getFullYear()}-${pad(saturday.getMonth() + 1)}-${pad(saturday.getDate())}`;
+        endStr = `${endOfWeek.getFullYear()}-${pad(endOfWeek.getMonth() + 1)}-${pad(endOfWeek.getDate())}`;
       } else if (period === 'mes_actual') {
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -742,10 +742,19 @@ export default function Metrados() {
     return baseData.filter(m => {
       // 1. Search term
       if (searchLower) {
+        const [, mm, dd] = (m.fecha_ejecucion || '').split('-');
+        const fechaLocalStr = dd && mm ? `${dd}/${mm}` : '';
+        const fechaInvertida = dd && mm ? `${dd}-${mm}-${m.fecha_ejecucion?.split('-')[0]}` : '';
+        const fechaInvertidaSlash = dd && mm ? `${dd}/${mm}/${m.fecha_ejecucion?.split('-')[0]}` : '';
+
         const matches = m.snapshot_codigo?.toLowerCase().includes(searchLower) ||
                         m.snapshot_descripcion?.toLowerCase().includes(searchLower) ||
                         m.cuadrilla?.toLowerCase().includes(searchLower) ||
-                        m.obrero_nombre?.toLowerCase().includes(searchLower);
+                        m.obrero_nombre?.toLowerCase().includes(searchLower) ||
+                        m.fecha_ejecucion?.toLowerCase().includes(searchLower) ||
+                        fechaLocalStr.includes(searchLower) ||
+                        fechaInvertida.includes(searchLower) ||
+                        fechaInvertidaSlash.includes(searchLower);
         if (!matches) return false;
       }
 
@@ -791,8 +800,11 @@ export default function Metrados() {
       }
 
       // 8. Rango de fechas (usando effectiveDateRange)
-      if (effectiveDateRange.startStr && m.fecha_ejecucion < effectiveDateRange.startStr) return false;
-      if (effectiveDateRange.endStr && m.fecha_ejecucion > effectiveDateRange.endStr) return false;
+      if (effectiveDateRange.startStr || effectiveDateRange.endStr) {
+        if (!m.fecha_ejecucion) return false;
+        if (effectiveDateRange.startStr && m.fecha_ejecucion < effectiveDateRange.startStr) return false;
+        if (effectiveDateRange.endStr && m.fecha_ejecucion > effectiveDateRange.endStr) return false;
+      }
 
       return true;
     });

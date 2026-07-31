@@ -91,9 +91,9 @@ self.onmessage = (e: MessageEvent) => {
       const veces = Number(row['Veces']) || 0;
 
       let parcial = cant;
-      if (largo > 0) parcial *= largo;
-      if (ancho > 0) parcial *= ancho;
-      if (alto > 0) parcial *= alto;
+      if (largo !== 0) parcial *= largo;
+      if (ancho !== 0) parcial *= ancho;
+      if (alto !== 0) parcial *= alto;
       
       const total = parcial * (veces > 0 ? veces : 1);
 

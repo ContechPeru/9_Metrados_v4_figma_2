@@ -49,7 +49,7 @@ const FRENTES_BLOQUES: Record<string, string[]> = {
   'F2': ['B4', 'B6']
 };
 
-const NIVELES = ['N1', 'N2', 'N3', 'ZZ', 'AZ'];
+const NIVELES = ['S0', 'N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'ZZ', 'AZ', 'FC'];
 
 const DebouncedInput = ({ value, onChange, ...props }: any) => {
   const [localValue, setLocalValue] = useState(value);
@@ -76,7 +76,7 @@ const DebouncedInput = ({ value, onChange, ...props }: any) => {
 
 export function MetradosForm() {
   const { proyectos, especialidades, usuarios, metrados, factoresHvac, editingMetrado, partidas } = useMetradosStore();
-  const { user, systemConfig, isReadOnlyMetrados, isGerencia, isAdminPresupuesto } = useAuthStore();
+  const { user, systemConfig, isReadOnlyMetrados, isGerencia, isAdminPresupuesto, isLiquidaciones } = useAuthStore();
   
   const isSuper = isGerencia() || isAdminPresupuesto();
   const lockedEspecialidad = !isSuper && user?.especialidad ? user.especialidad : null;
@@ -269,7 +269,7 @@ export function MetradosForm() {
   return (
     <>
       <div className="flex flex-col h-full bg-slate-100 border-l border-gray-200 relative" style={{ width: 400 }}>
-      <div className={`p-4 border-b flex items-center justify-between text-white ${editingMetrado ? 'bg-orange-500' : 'bg-[#1E3A5F]'}`}>
+      <div className={`p-4 border-b flex items-center justify-between text-white ${editingMetrado ? 'bg-orange-500' : 'bg-[#065f46]'}`}>
         <h2 className="text-sm font-bold flex items-center gap-2 tracking-wide uppercase">
           {editingMetrado ? 'Modo Edición' : 'Nuevo Metrado'}
         </h2>
@@ -420,7 +420,7 @@ export function MetradosForm() {
                         >
                           <div className="flex justify-between gap-3">
                             <div className="flex flex-col flex-1 min-w-0">
-                              <div className="font-bold text-[#1E3A5F] truncate">
+                              <div className="font-bold text-[#065f46] truncate">
                                 {p.codigo_expediente} {isDD && <span className="text-[9px] text-red-500 font-bold ml-1">(No admitido)</span>}
                               </div>
                               <div className="text-gray-600 text-[11px] leading-tight mt-1 line-clamp-2">
@@ -457,7 +457,8 @@ export function MetradosForm() {
           {/* Sub-Tarjeta Visor Financiero */}
           {selectedPartida && (() => {
             const cantTotal = selectedPartida.cantidad_presupuestada || 0;
-            const cantAcum = selectedPartida.metrado_acumulado_anterior || 0;
+            const isLiq = isLiquidaciones();
+            const cantAcum = isLiq ? 0 : (selectedPartida.metrado_acumulado_anterior || 0);
             const cantMes = metrados.filter(m => m.partida_id === selectedPartida.id && (!soloLiberados || m.is_liberado !== false)).reduce((sum, m) => sum + (m.resultado_total || 0), 0);
             const cantSaldo = cantTotal - cantAcum - cantMes;
             const isMayorMetrado = cantSaldo < 0;
@@ -469,20 +470,22 @@ export function MetradosForm() {
               <div className={`relative border rounded p-2 flex justify-between items-center mt-2 shadow-sm ${isMayorMetrado ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'}`}>
                 <div className="flex flex-1 justify-around items-center divide-x divide-slate-200/60">
                   <div className="flex flex-col items-center px-1">
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Total Exp.</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">{isLiq ? 'Expediente' : 'Total Exp.'}</span>
                     <span className="font-mono text-[11px] font-semibold text-slate-700">{cantTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
                   </div>
+                  {!isLiq && (
+                    <div className="flex flex-col items-center px-1">
+                      <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Acum. Ant.</span>
+                      <span className="font-mono text-[11px] font-semibold text-slate-700">{cantAcum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
+                    </div>
+                  )}
                   <div className="flex flex-col items-center px-1">
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Acum. Ant.</span>
-                    <span className="font-mono text-[11px] font-semibold text-slate-700">{cantAcum.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
-                  </div>
-                  <div className="flex flex-col items-center px-1">
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Mes Actual</span>
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">{isLiq ? 'Total Liquidado' : 'Mes Actual'}</span>
                     <span className="font-mono text-[11px] font-bold text-blue-600">{cantMes.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
                   </div>
                   <div className="flex flex-col items-center px-1">
                     <span className={`text-[9px] font-bold uppercase tracking-wider mb-0.5 ${isMayorMetrado ? 'text-red-600' : 'text-emerald-600'}`}>
-                      {isMayorMetrado ? 'Mayor Metrado' : 'Saldo Pendiente'}
+                      {isMayorMetrado ? 'Mayor Metrado' : (isLiq ? 'Diferencia' : 'Saldo Pendiente')}
                     </span>
                     <span className={`font-mono text-xs font-bold ${isMayorMetrado ? 'text-red-600' : 'text-emerald-600'}`}>
                       {Math.abs(cantSaldo).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span className="text-[9px] opacity-70">{selectedPartida.unidad_medida}</span>
@@ -496,7 +499,7 @@ export function MetradosForm() {
                       'bg-slate-200 text-slate-700 border-slate-300'
                     }`}>
                       <span>{pctEjecutado.toFixed(1)}%</span>
-                      <span className="text-[7px] font-semibold uppercase opacity-70 leading-none mt-0.5 text-center">Ejecutado</span>
+                      <span className="text-[7px] font-semibold uppercase opacity-70 leading-none mt-0.5 text-center">{isLiq ? 'Liquidado' : 'Ejecutado'}</span>
                     </div>
                   </div>
                 </div>
@@ -855,8 +858,35 @@ export function MetradosForm() {
         )}
       </div>
 
+      {/* Observaciones Generales */}
+      <div className="px-3 pb-2">
+        <div className="flex items-center justify-between mb-0.5">
+          <label className="block text-[10px] text-gray-700 font-bold">
+            Observaciones
+          </label>
+          <button 
+            type="button"
+            onClick={() => {
+              const lastObs = localStorage.getItem('last_observacion');
+              if (lastObs) updateValue('observacion', lastObs);
+            }}
+            className="text-[9px] font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 transition-colors"
+            title="Copiar observación del último metrado registrado"
+          >
+            + Última Obs.
+          </button>
+        </div>
+        <textarea
+          rows={1}
+          value={values.observacion ?? ''}
+          onChange={e => updateValue('observacion', e.target.value)}
+          placeholder="Añade detalles o sustento adicional aquí..."
+          className="w-full text-[11px] p-2 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition-shadow"
+        />
+      </div>
+
       {/* Footer Fijo */}
-      <div className="p-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+      <div className="p-2 border-t border-gray-200 bg-gray-50 flex-shrink-0">
         {(() => {
           const lockDate = systemConfig?.metrados_lock?.activo ? systemConfig.metrados_lock.fecha_cierre : null;
           const isTimeLocked = lockDate && values.fecha <= lockDate && !isSuper;
@@ -879,7 +909,7 @@ export function MetradosForm() {
                 }
               }}
               disabled={formDisabled}
-              className={`w-full font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-md ${
+              className={`w-full font-bold py-2 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow-sm ${
                 readOnly || isTimeLocked ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 
                 editingMetrado ? 'bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white' : 
                 'bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white'
