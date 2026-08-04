@@ -14,6 +14,7 @@ import { exportarValorizadosExcel } from '../../lib/exportValorizados';
 import { exportarFormato1Excel } from '../../lib/export1';
 import { exportarResumenExcel } from '../../lib/exportResumen';
 import { exportarSaldosExcel } from '../../lib/exportSaldos';
+import { exportarLiquidExcel } from '../../lib/exportLiquid';
 import MetradosTreeGrid from './MetradosTreeGrid';
 import { ActiveUsers } from '../ActiveUsers';
 
@@ -43,6 +44,7 @@ const EXPORT_OPTIONS = [
   { icon: FileText, label: 'Exportar PDF', color: '#EF4444' },
   { icon: FileSpreadsheet, label: 'Exportar Excel', color: '#22C55E' },
   { icon: FileSpreadsheet, label: 'Exportar Valorizado', color: '#0EA5E9' },
+  { icon: FileSpreadsheet, label: 'Exportar Liquid', color: '#10B981' },
   { icon: FileSpreadsheet, label: 'Exportar Saldos de Presupuesto', color: '#8B5CF6' },
   { icon: FileSpreadsheet, label: 'Exportar_1 (Resumen Trimble)', color: '#059669' },
   { icon: FileCode2, label: 'Exportar CSV', color: '#F59E0B' },
@@ -51,7 +53,7 @@ const EXPORT_OPTIONS = [
   { icon: Printer, label: 'Imprimir', color: '#64748B' },
 ];
 
-function ExportDropdown({ onExportExcel, onExportValorizado, onExport1, onExportResumen, onExportSaldos, loading }: { onExportExcel: () => void; onExportValorizado: () => void; onExport1: () => void; onExportResumen: () => void; onExportSaldos: () => void; loading?: boolean }) {
+function ExportDropdown({ onExportExcel, onExportValorizado, onExportLiquid, onExport1, onExportResumen, onExportSaldos, loading }: { onExportExcel: () => void; onExportValorizado: () => void; onExportLiquid: () => void; onExport1: () => void; onExportResumen: () => void; onExportSaldos: () => void; loading?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -103,6 +105,7 @@ function ExportDropdown({ onExportExcel, onExportValorizado, onExport1, onExport
                   setOpen(false); 
                   if (label === 'Exportar Excel') onExportExcel(); 
                   if (label === 'Exportar Valorizado') onExportValorizado(); 
+                  if (label === 'Exportar Liquid') onExportLiquid();
                   if (label === 'Exportar Saldos de Presupuesto') onExportSaldos();
                   if (label === 'Exportar_1 (Resumen Trimble)') onExport1();
                   if (label === 'Exportar resumen') onExportResumen();
@@ -571,9 +574,18 @@ export default function Metrados() {
   const [viewMode, setViewMode] = useState<'Detallada' | 'Resumida' | 'Valorizada'>('Detallada');
   const [period, setPeriod] = useState<'esta_semana' | 'semana_anterior' | 'todo'>('esta_semana');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [groupByDate, setGroupByDate] = useState<'none' | 'desc' | 'asc'>('none');
   
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' });
+
+  // Efecto para aplicar el debounce al buscador
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isSubmittingMasivo, setIsSubmittingMasivo] = useState(false);
 
@@ -724,7 +736,7 @@ export default function Metrados() {
   const partidasMap = useMemo(() => new Map(partidas.map(p => [p.id, p])), [partidas]);
 
   const filteredMetrados = useMemo(() => {
-    const searchLower = searchTerm?.toLowerCase() || '';
+    const searchLower = debouncedSearchTerm?.toLowerCase() || '';
     
     // Parseo del filtro de plano una sola vez
     let parsedPlano = null;
@@ -808,7 +820,7 @@ export default function Metrados() {
 
       return true;
     });
-  }, [metrados, partidasMap, searchTerm, estadoTab, contextoTab, filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano, effectiveDateRange]);
+  }, [metrados, partidasMap, debouncedSearchTerm, estadoTab, contextoTab, filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano, effectiveDateRange]);
 
   useEffect(() => {
     if (period === 'todo' && !dateRange.start && !dateRange.end) {
@@ -921,6 +933,24 @@ export default function Metrados() {
       setExportando(false);
     }
   };
+
+  const exportToLiquid = async () => {
+    setExportando(true);
+    try {
+      await exportarLiquidExcel({
+        especialidad: filterEspecialidad || undefined,
+        frente:       filterFrente       || undefined,
+        bloque:       filterBloque       || undefined,
+        fechaDesde:   effectiveDateRange.startStr || undefined,
+        fechaHasta:   effectiveDateRange.endStr || undefined,
+      }, filteredMetrados);
+    } catch (e: any) {
+      alert(`Error al exportar Liquidaciones: ${e.message}`);
+    } finally {
+      setExportando(false);
+    }
+  };
+
   const exportToFormato1 = async () => {
     setExportando(true);
     try {
@@ -1121,6 +1151,7 @@ export default function Metrados() {
           <ExportDropdown 
             onExportExcel={exportToExcel} 
             onExportValorizado={exportToValorizadoExcel}
+            onExportLiquid={exportToLiquid}
             onExport1={exportToFormato1}
             onExportResumen={exportToResumen}
             onExportSaldos={exportToSaldos}

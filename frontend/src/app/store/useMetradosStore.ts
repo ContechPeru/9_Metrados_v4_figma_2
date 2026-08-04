@@ -153,7 +153,38 @@ export const useMetradosStore = create<MetradosState>((set, get) => ({
     treintaDiasAtras.setDate(treintaDiasAtras.getDate() - 30);
     const fechaLimite = treintaDiasAtras.toISOString().split('T')[0];
     
-    while (hasMore) {
+    // Fetch en Paralelo (Fast Load)
+    let queryBase = supabase.from('registro_metrados').select('*', { count: 'exact', head: true });
+
+    if (!fetchAll) {
+      if (startDate && endDate) {
+        queryBase = queryBase.gte('fecha_ejecucion', startDate).lte('fecha_ejecucion', endDate);
+      } else if (startDate) {
+        queryBase = queryBase.gte('fecha_ejecucion', startDate);
+      } else if (endDate) {
+        queryBase = queryBase.lte('fecha_ejecucion', endDate);
+      } else {
+        queryBase = queryBase.gte('fecha_ejecucion', fechaLimite);
+      }
+    }
+
+    const { count, error: countError } = await queryBase;
+
+    if (countError) {
+      set({ isLoading: false });
+      console.error("Error fetching metrados count:", countError);
+      return;
+    }
+
+    if (!count || count === 0) {
+      set({ metrados: [], isLoading: false });
+      return;
+    }
+
+    const totalPages = Math.ceil(count / size);
+    const promises = [];
+
+    for (let page = 0; page < totalPages; page++) {
       let query = supabase
         .from('registro_metrados')
         .select(`
@@ -177,23 +208,23 @@ export const useMetradosStore = create<MetradosState>((set, get) => ({
         }
       }
 
-      const { data, error } = await query
-        .order('fecha_ejecucion', { ascending: true })
-        .order('created_at', { ascending: true })
-        .range(page * size, (page + 1) * size - 1);
-        
-      if (error) {
-        set({ isLoading: false });
-        console.error("Error fetching metrados:", error);
-        return;
+      promises.push(
+        query
+          .order('fecha_ejecucion', { ascending: true })
+          .order('created_at', { ascending: true })
+          .range(page * size, (page + 1) * size - 1)
+      );
+    }
+
+    const results = await Promise.all(promises);
+    
+    for (const res of results) {
+      if (res.error) {
+        console.error("Error in parallel fetch:", res.error);
+        continue;
       }
-      
-      if (data && data.length > 0) {
-        allMetrados.push(...data);
-        page++;
-        if (data.length < size) hasMore = false;
-      } else {
-        hasMore = false;
+      if (res.data) {
+        allMetrados.push(...res.data);
       }
     }
 

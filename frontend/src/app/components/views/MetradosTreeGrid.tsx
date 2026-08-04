@@ -23,6 +23,115 @@ function useLatestCallbacks<T extends Record<string, any>>(callbacks: T) {
   return ref;
 }
 
+interface PartidaRowProps {
+  node: TreeNode;
+  depth: number;
+  dateGroup: string;
+  isExpanded: boolean;
+  toggleExpand: (id: string) => void;
+  viewMode: 'Detallada' | 'Resumida' | 'Valorizada';
+  index: number;
+  measureRef: any;
+}
+
+const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpand, viewMode, index, measureRef }: PartidaRowProps) => {
+  const hasChildren = Object.keys(node.children).length > 0 || node.metrados.length > 0;
+  
+  // Estilos condicionales por nivel S10
+  let bgClass = 'bg-white';
+  let textClass = 'text-slate-700';
+  let fontClass = 'font-normal';
+
+  if (node.partida.es_agrupador) {
+    bgClass = 'bg-emerald-50 border-t-2 border-emerald-200';
+    textClass = 'text-emerald-900';
+    fontClass = 'font-bold';
+  } else if (hasChildren) {
+    bgClass = 'bg-white border-t border-emerald-100';
+    textClass = 'text-emerald-900';
+    fontClass = 'font-semibold';
+  }
+
+  const isDetallada = viewMode === 'Detallada';
+  const isValorizada = viewMode === 'Valorizada';
+  const isAgrupador = node.partida.es_agrupador;
+  const precio = node.partida.precio_unitario_base || 0;
+  const montoTotal = isValorizada ? node.parcialTotal * precio : 0;
+
+  return (
+    <tr key={`p-${dateGroup}-${node.partida.id}`} role="row" aria-expanded={hasChildren ? isExpanded : undefined} aria-level={depth + 1} className={`hover:bg-blue-50/50 transition-colors ${bgClass} ${textClass} ${fontClass} text-[11px]`} ref={measureRef} data-index={index}>
+      {/* Checkbox / Espacio */}
+      <td className="px-2 py-2 border-b border-slate-200"></td>
+      
+      {isDetallada && (
+        <td className="px-1 py-2 border-b border-slate-200"></td>
+      )}
+      
+      {/* Item (con sangría) */}
+      <td className="px-1.5 py-2 border-b border-slate-200 truncate" style={{ paddingLeft: `${Math.max(12, depth * 20)}px` }}>
+        <div className="flex items-center gap-1">
+          {hasChildren ? (
+            <button onClick={() => toggleExpand(node.partida.id)} className="p-0.5 hover:bg-black/10 rounded cursor-pointer">
+              {isExpanded ? <ChevronDown size={14} className="opacity-70" /> : <ChevronRight size={14} className="opacity-70" />}
+            </button>
+          ) : <span className="w-4" />}
+          <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>{node.partida.codigo_expediente}</span>
+        </div>
+      </td>
+      
+      {/* Descripción */}
+      <td className="px-1.5 py-2 border-b border-slate-200 whitespace-normal break-words leading-tight">
+        {node.partida.modificacion && <span className="font-bold text-blue-600 mr-2 text-[10.5px]">[{node.partida.modificacion}]</span>}
+        <span className="font-semibold text-slate-800 text-[10.5px] uppercase tracking-wide">{node.partida.descripcion}</span>
+      </td>
+      
+      {/* Unidad */}
+      <td className="px-1.5 py-2 border-b border-slate-200 text-center text-slate-500 font-medium">
+        {isAgrupador ? '' : node.partida.unidad_medida}
+      </td>
+      
+      {isDetallada && (
+        <>
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Largo */}
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Ancho */}
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Alto */}
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Parcial */}
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Autor */}
+          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* N Veces */}
+        </>
+      )}
+      
+      {/* Parcial Totalizado Bottom-Up */}
+      <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+        {node.parcialTotal > 0 ? node.parcialTotal.toFixed(2) : ''}
+      </td>
+
+      {isValorizada && (
+        <>
+          <td className="px-1.5 py-2 border-b border-slate-200 text-right text-slate-600 font-medium">
+            {isAgrupador ? '' : `S/ ${precio.toFixed(2)}`}
+          </td>
+          <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-emerald-700" style={{ fontFamily: 'JetBrains Mono, monospace', backgroundColor: montoTotal > 0 ? '#ECFDF5' : 'transparent' }}>
+            {montoTotal > 0 ? `S/ ${montoTotal.toLocaleString('es-PE', { minimumFractionDigits: 2 })}` : ''}
+          </td>
+        </>
+      )}
+      
+      {/* Acciones */}
+      {isDetallada && <td className="px-1.5 py-2 border-b border-slate-200"></td>}
+    </tr>
+  );
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.node.parcialTotal === nextProps.node.parcialTotal &&
+    prevProps.isExpanded === nextProps.isExpanded &&
+    prevProps.viewMode === nextProps.viewMode &&
+    prevProps.depth === nextProps.depth &&
+    prevProps.dateGroup === nextProps.dateGroup &&
+    prevProps.index === nextProps.index
+  );
+});
+
 const MetradoRow = React.memo(({ 
   m, 
   depth, 
@@ -45,7 +154,7 @@ const MetradoRow = React.memo(({
       data-index={index}
       role="row" 
       aria-level={depth + 2} 
-      className={`transition-colors text-[10.5px] border-b border-green-100/50 ${m.is_liberado ? 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-800' : 'bg-emerald-50 hover:bg-emerald-100 text-slate-700'}`}
+      className={`transition-colors text-[10.5px] border-b border-green-100/50 ${(m.sin_plano || m.obs_motivo) ? 'bg-orange-50/80 hover:bg-orange-100 text-orange-900' : m.is_liberado ? 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-800' : 'bg-emerald-50 hover:bg-emerald-100 text-slate-700'}`}
     >
       <td className="px-1 py-1 text-center">
         <div 
@@ -284,99 +393,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
     overscan: 10,
   });
 
-  // Componente de fila para las Partidas
-  const renderNode = (node: TreeNode, depth: number, dateGroup: string, measureRef: any, index: number) => {
-    const isExpanded = expandedNodes[node.partida.id] ?? true;
-    const hasChildren = Object.keys(node.children).length > 0 || node.metrados.length > 0;
-    
-    // Estilos condicionales por nivel S10
-    let bgClass = 'bg-white';
-    let textClass = 'text-slate-700';
-    let fontClass = 'font-normal';
-
-    if (node.partida.es_agrupador) {
-      bgClass = 'bg-emerald-50 border-t-2 border-emerald-200';
-      textClass = 'text-emerald-900';
-      fontClass = 'font-bold';
-    } else if (hasChildren) {
-      bgClass = 'bg-white border-t border-emerald-100';
-      textClass = 'text-emerald-900';
-      fontClass = 'font-semibold';
-    }
-
-    const isDetallada = viewMode === 'Detallada';
-    const isValorizada = viewMode === 'Valorizada';
-    const hasMetrados = node.metrados.length > 0;
-    const isAgrupador = node.partida.es_agrupador;
-    const precio = node.partida.precio_unitario_base || 0;
-    const montoTotal = isValorizada ? node.parcialTotal * precio : 0;
-
-    const rows = [];
-
-    return (
-      <tr key={`p-${dateGroup}-${node.partida.id}`} role="row" aria-expanded={hasChildren ? isExpanded : undefined} aria-level={depth + 1} className={`hover:bg-blue-50/50 transition-colors ${bgClass} ${textClass} ${fontClass} text-[11px]`} ref={measureRef} data-index={index}>
-        {/* Checkbox / Espacio */}
-        <td className="px-2 py-2 border-b border-slate-200"></td>
-        
-        {isDetallada && (
-          <td className="px-1 py-2 border-b border-slate-200"></td>
-        )}
-        
-        {/* Item (con sangría) */}
-        <td className="px-1.5 py-2 border-b border-slate-200 truncate" style={{ paddingLeft: `${Math.max(12, depth * 20)}px` }}>
-          <div className="flex items-center gap-1">
-            {hasChildren ? (
-              <button onClick={() => toggleExpand(node.partida.id)} className="p-0.5 hover:bg-black/10 rounded cursor-pointer">
-                {isExpanded ? <ChevronDown size={14} className="opacity-70" /> : <ChevronRight size={14} className="opacity-70" />}
-              </button>
-            ) : <span className="w-4" />}
-            <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>{node.partida.codigo_expediente}</span>
-          </div>
-        </td>
-        
-        {/* Descripción */}
-        <td className="px-1.5 py-2 border-b border-slate-200 whitespace-normal break-words leading-tight">
-          {node.partida.modificacion && <span className="font-bold text-blue-600 mr-2 text-[10.5px]">[{node.partida.modificacion}]</span>}
-          <span className="font-semibold text-slate-800 text-[10.5px] uppercase tracking-wide">{node.partida.descripcion}</span>
-        </td>
-        
-        {/* Unidad */}
-        <td className="px-1.5 py-2 border-b border-slate-200 text-center text-slate-500 font-medium">
-          {isAgrupador ? '' : node.partida.unidad_medida}
-        </td>
-        
-        {isDetallada && (
-          <>
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Largo */}
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Ancho */}
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Alto */}
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Parcial */}
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Autor */}
-            <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* N Veces */}
-          </>
-        )}
-        
-        {/* Parcial Totalizado Bottom-Up */}
-        <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-          {node.parcialTotal > 0 ? node.parcialTotal.toFixed(2) : ''}
-        </td>
-
-        {isValorizada && (
-          <>
-            <td className="px-1.5 py-2 border-b border-slate-200 text-right text-slate-600 font-medium">
-              {isAgrupador ? '' : `S/ ${precio.toFixed(2)}`}
-            </td>
-            <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-emerald-700" style={{ fontFamily: 'JetBrains Mono, monospace', backgroundColor: montoTotal > 0 ? '#ECFDF5' : 'transparent' }}>
-              {montoTotal > 0 ? `S/ ${montoTotal.toLocaleString('es-PE', { minimumFractionDigits: 2 })}` : ''}
-            </td>
-          </>
-        )}
-        
-        {/* Acciones */}
-        {isDetallada && <td className="px-1.5 py-2 border-b border-slate-200"></td>}
-      </tr>
-    );
-  };
+  // Removido renderNode porque ahora usamos el componente PartidaRow memoizado
 
   // Si no hay partidas (aún cargando o error), mostrar mensaje
   if (partidas.length === 0) {
@@ -445,7 +462,19 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
                 </tr>
               );
             } else if (rowData.type === 'partida') {
-              return renderNode(rowData.node, rowData.depth, rowData.dateGroup, virtualRow.measureElement, virtualRow.index);
+              return (
+                <PartidaRow
+                  key={`p-${rowData.dateGroup}-${rowData.node.partida.id}`}
+                  node={rowData.node}
+                  depth={rowData.depth}
+                  dateGroup={rowData.dateGroup}
+                  isExpanded={expandedNodes[rowData.node.partida.id] ?? true}
+                  toggleExpand={toggleExpand}
+                  viewMode={viewMode}
+                  index={virtualRow.index}
+                  measureRef={virtualRow.measureElement}
+                />
+              );
             } else if (rowData.type === 'metrado') {
               // Extract the component creation from the old recursive function directly here
               return (
