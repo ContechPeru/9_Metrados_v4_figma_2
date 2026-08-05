@@ -60,6 +60,10 @@ const COLS: ColDef[] = [
   { key: 'factor',       label: 'FACTOR',      width: 8,  h: 'center' },
   { key: 'subtotal',     label: 'SUB TOTA',    width: 11, h: 'right' },
   { key: 'total',        label: 'TOTAL',       width: 11, h: 'right' },
+  { key: 'frente',       label: 'FRENTE',      width: 12, h: 'center' },
+  { key: 'bloque',       label: 'BLOQUE',      width: 12, h: 'center' },
+  { key: 'nivel',        label: 'NIVEL',       width: 10, h: 'center' },
+  { key: 'sistema',      label: 'SISTEMA/AMBIENTE', width: 20, h: 'left' },
 ];
 
 const NCOLS = COLS.length;
@@ -201,8 +205,9 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
     cell.border = brd();
     cell.alignment = aln('center');
 
-    // D-L: Vacíos con borde
-    for (let c = 4; c <= 12; c++) {
+    // D-Q (excepto M): Vacíos con borde
+    for (let c = 4; c <= 17; c++) {
+      if (c === 13) continue; // Saltar M (TOTAL)
       cell = ws.getCell(r, c);
       cell.border = brd();
       if (COLS[c-1].bg) cell.fill = fill(COLS[c-1].bg!);
@@ -226,7 +231,7 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
       const partesSustento = [m.bloque_sector, m.elemento_desc, m.detalle_desc].filter(p => p && p !== '-' && p !== '---');
       const sustentoStr = partesSustento.length > 0 ? partesSustento.join(' - ') : 'Sustento general';
 
-      for (let c = 1; c <= 13; c++) {
+      for (let c = 1; c <= 17; c++) {
         const cell = ws.getCell(r, c);
         cell.border = brdDotted(); // Borde punteado para los detalles
         cell.font = fnt(C.DETAIL_FG, 8);
@@ -254,6 +259,14 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
         } else if (c === 12) {
           // SUB TOTAL
           cell.value = m.resultado_total; cell.alignment = aln('right'); cell.numFmt = '#,##0.00';
+        } else if (c === 14) {
+          cell.value = m.frente_trabajo; cell.alignment = aln('center');
+        } else if (c === 15) {
+          cell.value = m.bloque_sector; cell.alignment = aln('center');
+        } else if (c === 16) {
+          cell.value = m.nivel_piso; cell.alignment = aln('center');
+        } else if (c === 17) {
+          cell.value = m.elemento_desc; cell.alignment = aln('left', true);
         } else {
           // Otras celdas quedan vacías pero con borde
           cell.value = '';
@@ -264,13 +277,13 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
     
     // Fila en blanco separadora con bordes laterales
     ws.getRow(r).height = 6;
-    for (let c = 1; c <= 13; c++) {
+    for (let c = 1; c <= 17; c++) {
        const cell = ws.getCell(r, c);
        cell.border = { left: { style: 'thin', color: { argb: C.BORDER_CLR } }, right: { style: 'thin', color: { argb: C.BORDER_CLR } } };
        if (COLS[c-1].bg) cell.fill = fill(COLS[c-1].bg!);
     }
     // Cerrar el borde inferior del bloque separador
-    for (let c = 1; c <= 13; c++) {
+    for (let c = 1; c <= 17; c++) {
         ws.getCell(r, c).border = { bottom: { style: 'thin', color: { argb: C.BORDER_CLR } }, left: { style: 'thin', color: { argb: C.BORDER_CLR } }, right: { style: 'thin', color: { argb: C.BORDER_CLR } } };
     }
     r++;
