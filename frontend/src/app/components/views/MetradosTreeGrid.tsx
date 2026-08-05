@@ -240,10 +240,10 @@ const MetradoRow = React.memo(({
 });
 
 
-// Interfaz para el nodo del árbol
 interface TreeNode {
   partida: Partida;
   children: Record<string, TreeNode>;
+  sortedChildren?: TreeNode[];
   metrados: MetradoRecord[];
   parcialTotal: number;
 }
@@ -324,6 +324,11 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         Object.values(nodes).forEach(node => {
           let nodeTotal = 0;
           if (Object.keys(node.children).length > 0) nodeTotal += calculateTotals(node.children);
+          
+          node.sortedChildren = Object.values(node.children).sort((a, b) => 
+            a.partida.codigo_expediente.localeCompare(b.partida.codigo_expediente, undefined, { numeric: true, sensitivity: 'base' })
+          );
+
           node.metrados.forEach(m => nodeTotal += m.resultado_total || 0);
           node.parcialTotal = nodeTotal;
           sum += nodeTotal;
@@ -365,13 +370,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         const isExpanded = expandedNodes[node.partida.id] ?? true;
         flat.push({ type: 'partida', node, depth, dateGroup });
         if (isExpanded) {
-          // Ya no ordenamos aquí en cada render, lo pre-ordenamos si es necesario o confiamos en el orden natural,
-          // pero para Partidas es útil ordenarlo rápido. Object.values es O(N) lo cual es barato.
-          // Solo ordenaremos si la cantidad de hijos es mayor a 1 para no gastar CPU.
-          const childrenArr = Object.values(node.children);
-          if (childrenArr.length > 1) {
-            childrenArr.sort((a, b) => a.partida.codigo_expediente.localeCompare(b.partida.codigo_expediente, undefined, { numeric: true, sensitivity: 'base' }));
-          }
+          const childrenArr = node.sortedChildren || [];
           childrenArr.forEach(child => flattenNode(child, depth + 1, dateGroup));
           
           if (viewMode === 'Detallada' && node.metrados.length > 0) {

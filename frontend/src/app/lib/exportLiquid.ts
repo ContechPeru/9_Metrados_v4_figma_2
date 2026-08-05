@@ -7,6 +7,7 @@
 
 import ExcelJS from 'exceljs';
 import { supabase } from './supabase';
+import { useMetradosStore } from '../store/useMetradosStore';
 
 // ─── Paleta ────────────────────────────────────────────────────────────────────
 const C = {
@@ -43,6 +44,11 @@ const aln = (
   wrap = false,
 ): Partial<ExcelJS.Alignment> => ({ horizontal: h, vertical: 'middle', wrapText: wrap });
 
+const getInitials = (name: string): string => {
+  if (!name || typeof name !== 'string') return '';
+  return name.trim().split(/\s+/).map(word => word[0]).filter(Boolean).join('').toUpperCase();
+};
+
 // ─── Columnas ─────────────────────────────────────────────────────────────────
 interface ColDef { key: string; label: string; width: number; h: ExcelJS.Alignment['horizontal']; bg?: string; }
 
@@ -58,12 +64,19 @@ const COLS: ColDef[] = [
   { key: 'area',         label: 'AREA',        width: 9,  h: 'center' },
   { key: 'volumen',      label: 'VOLUME',      width: 9,  h: 'center' },
   { key: 'factor',       label: 'FACTOR',      width: 8,  h: 'center' },
+  { key: 'acero',        label: 'ACERO',       width: 9,  h: 'center' },
   { key: 'subtotal',     label: 'SUB TOTA',    width: 11, h: 'right' },
   { key: 'total',        label: 'TOTAL',       width: 11, h: 'right' },
   { key: 'frente',       label: 'FRENTE',      width: 12, h: 'center' },
   { key: 'bloque',       label: 'BLOQUE',      width: 12, h: 'center' },
   { key: 'nivel',        label: 'NIVEL',       width: 10, h: 'center' },
   { key: 'sistema',      label: 'SISTEMA/AMBIENTE', width: 20, h: 'left' },
+  { key: 'observacion',  label: 'OBSERVACIÓN',  width: 15, h: 'left' },
+  { key: 'modificaciones',label: 'MODIFICACIONES', width: 12, h: 'center' },
+  { key: 'fecha',        label: 'FECHA',        width: 12, h: 'center' },
+  { key: 'cuadrilla',    label: 'CUADRILLA',    width: 15, h: 'left' },
+  { key: 'autor',        label: 'AUTOR',        width: 15, h: 'left' },
+  { key: 'grado',        label: 'GRADO',        width: 10, h: 'center' },
 ];
 
 const NCOLS = COLS.length;
@@ -83,17 +96,24 @@ export interface FiltrosExport {
 // ─── Fetch Datos ─────────────────────────────────────────────────────────────────
 async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
   if (localData && localData.length > 0) {
-    return localData;
+    const partidasMap = new Map(useMetradosStore.getState().partidas.map(p => [p.id, p]));
+    return localData.map((m: any) => {
+      const p = partidasMap.get(m.partida_id);
+      return {
+        ...m,
+        _modificacion: p?.modificacion || ''
+      };
+    });
   }
 
   let q = supabase
     .from('registro_metrados')
     .select(`
       grado, fecha_ejecucion, especialidad, frente_trabajo, bloque_sector,
-      nivel_piso, cuadrilla, elemento_desc, detalle_desc,
+      nivel_piso, cuadrilla, elemento_desc, detalle_desc, observacion,
       snapshot_codigo, snapshot_descripcion,
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho, nro_repeticiones,
-      resultado_total, unidad, firma_ingeniero,
+      acero_diametro, hvac_factor, resultado_total, unidad, firma_ingeniero,
       metrados_obreros ( personal_obrero ( nombres_completos, categoria_laboral ) ),
       catalogo_partidas ( modificacion, precio_unitario_base, pu_actual )
     `)
@@ -112,11 +132,14 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
   const { data, error } = await q;
   if (error) throw new Error(error.message);
 
-  return data ?? [];
+  return (data ?? []).map((m: any) => ({
+    ...m,
+    _modificacion: (m.catalogo_partidas && !Array.isArray(m.catalogo_partidas) ? m.catalogo_partidas.modificacion : null) || ''
+  }));
 }
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
-async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<ExcelJS.Workbook> {
+export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<ExcelJS.Workbook> {
   const wb = new ExcelJS.Workbook();
   wb.creator = 'Sistema Metrados';
   const ws = wb.addWorksheet('Planilla Liquidacion', {
@@ -158,6 +181,7 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
     unidad: string;
     total: number;
     metrados: any[];
+    modificacion: string;
   }>();
 
   for (const row of rows) {
@@ -168,7 +192,8 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
         descripcion: row.snapshot_descripcion || '',
         unidad: row.unidad || '',
         total: 0,
-        metrados: []
+        metrados: [],
+        modificacion: row._modificacion || ''
       });
     }
     const group = partidasMap.get(key)!;
@@ -197,30 +222,34 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
     cell.font = fnt(C.PARTIDA_FG, 9, true);
     cell.border = brd();
     cell.alignment = aln('left');
-
-    // C: UND
-    cell = ws.getCell(r, 3);
-    cell.value = partida.unidad;
-    cell.font = fnt(C.PARTIDA_FG, 9, true);
-    cell.border = brd();
-    cell.alignment = aln('center');
-
-    // D-Q (excepto M): Vacíos con borde
-    for (let c = 4; c <= 17; c++) {
-      if (c === 13) continue; // Saltar M (TOTAL)
-      cell = ws.getCell(r, c);
+    for (let c = 1; c <= NCOLS; c++) {
+      const cell = ws.getCell(r, c);
+      
+      cell.fill = fill(C.PARTIDA_BG);
       cell.border = brd();
-      if (COLS[c-1].bg) cell.fill = fill(COLS[c-1].bg!);
-    }
 
-    // M: TOTAL
-    cell = ws.getCell(r, 13);
-    cell.value = partida.total;
-    cell.font = fnt(C.PARTIDA_FG, 9, true);
-    cell.border = brd();
-    cell.alignment = aln('right');
-    cell.numFmt = '#,##0.00';
-    
+      if (c === 1) {
+        cell.value = partida.item;
+        cell.font = fnt(C.PARTIDA_FG, 9, true);
+      } else if (c === 2) {
+        cell.value = partida.descripcion;
+        cell.font = fnt(C.PARTIDA_FG, 9, true, false);
+        cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+      } else if (c === 3) {
+        cell.value = partida.unidad;
+        cell.font = fnt(C.PARTIDA_FG, 9, true);
+        cell.alignment = aln('center');
+      } else if (c === 14) {
+        cell.value = partida.total;
+        cell.font = fnt(C.PARTIDA_FG, 9, true);
+        cell.alignment = aln('right');
+        cell.numFmt = '#,##0.00';
+      } else if (c === 20) {
+        cell.value = partida.modificacion || '';
+        cell.font = fnt(C.PARTIDA_FG, 9, true);
+        cell.alignment = aln('center');
+      }
+    }
     r++;
 
     // 4b. Filas de Detalle (Metrados)
@@ -231,7 +260,7 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
       const partesSustento = [m.bloque_sector, m.elemento_desc, m.detalle_desc].filter(p => p && p !== '-' && p !== '---');
       const sustentoStr = partesSustento.length > 0 ? partesSustento.join(' - ') : 'Sustento general';
 
-      for (let c = 1; c <= 17; c++) {
+      for (let c = 1; c <= NCOLS; c++) {
         const cell = ws.getCell(r, c);
         cell.border = brdDotted(); // Borde punteado para los detalles
         cell.font = fnt(C.DETAIL_FG, 8);
@@ -256,17 +285,33 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
           cell.value = m.medida_ancho_empalme; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
         } else if (c === 8 && m.medida_alto_gancho) {
           cell.value = m.medida_alto_gancho; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 12) {
+        } else if (c === 11 && m.hvac_factor) {
+          cell.value = m.hvac_factor; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
+        } else if (c === 12 && m.acero_diametro) {
+          cell.value = m.acero_diametro; cell.alignment = aln('center');
+        } else if (c === 13) {
           // SUB TOTAL
           cell.value = m.resultado_total; cell.alignment = aln('right'); cell.numFmt = '#,##0.00';
-        } else if (c === 14) {
-          cell.value = m.frente_trabajo; cell.alignment = aln('center');
         } else if (c === 15) {
-          cell.value = m.bloque_sector; cell.alignment = aln('center');
+          cell.value = m.frente_trabajo; cell.alignment = aln('center');
         } else if (c === 16) {
-          cell.value = m.nivel_piso; cell.alignment = aln('center');
+          cell.value = m.bloque_sector; cell.alignment = aln('center');
         } else if (c === 17) {
+          cell.value = m.nivel_piso; cell.alignment = aln('center');
+        } else if (c === 18) {
           cell.value = m.elemento_desc; cell.alignment = aln('left', true);
+        } else if (c === 19) {
+          cell.value = m.observacion || ''; cell.alignment = aln('left', true);
+        } else if (c === 20) {
+          cell.value = m._modificacion || ''; cell.alignment = aln('center');
+        } else if (c === 21) {
+          cell.value = m.fecha_ejecucion; cell.alignment = aln('center');
+        } else if (c === 22) {
+          cell.value = m.cuadrilla; cell.alignment = aln('left');
+        } else if (c === 23) {
+          cell.value = getInitials(m.firma_ingeniero); cell.alignment = aln('center');
+        } else if (c === 24) {
+          cell.value = m.grado; cell.alignment = aln('center');
         } else {
           // Otras celdas quedan vacías pero con borde
           cell.value = '';
@@ -277,13 +322,13 @@ async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promise<Excel
     
     // Fila en blanco separadora con bordes laterales
     ws.getRow(r).height = 6;
-    for (let c = 1; c <= 17; c++) {
+    for (let c = 1; c <= NCOLS; c++) {
        const cell = ws.getCell(r, c);
        cell.border = { left: { style: 'thin', color: { argb: C.BORDER_CLR } }, right: { style: 'thin', color: { argb: C.BORDER_CLR } } };
        if (COLS[c-1].bg) cell.fill = fill(COLS[c-1].bg!);
     }
     // Cerrar el borde inferior del bloque separador
-    for (let c = 1; c <= 17; c++) {
+    for (let c = 1; c <= 23; c++) {
         ws.getCell(r, c).border = { bottom: { style: 'thin', color: { argb: C.BORDER_CLR } }, left: { style: 'thin', color: { argb: C.BORDER_CLR } }, right: { style: 'thin', color: { argb: C.BORDER_CLR } } };
     }
     r++;
@@ -319,7 +364,37 @@ export async function exportarLiquidExcel(
     return;
   }
 
-  const wb = await buildWorkbook(datos, filtros);
-  const fecha = new Date().toISOString().slice(0, 10);
-  await downloadBlob(wb, `Planilla_Metrados_Liquidacion_${fecha}.xlsx`);
+  if (typeof window !== 'undefined' && window.Worker) {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL('../workers/exportWorker.ts', import.meta.url), { type: 'module' });
+      worker.onmessage = (e) => {
+        if (e.data.success) {
+          const blob = new Blob([e.data.buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const fecha = new Date().toISOString().slice(0, 10);
+          a.download = `Planilla_Metrados_Liquidacion_${fecha}.xlsx`;
+          a.click();
+          URL.revokeObjectURL(url);
+          worker.terminate();
+          resolve();
+        } else {
+          worker.terminate();
+          reject(new Error(e.data.error));
+        }
+      };
+      worker.onerror = (err) => {
+        worker.terminate();
+        reject(err);
+      };
+      worker.postMessage({ type: 'LIQUID', datos, filtros });
+    });
+  } else {
+    const wb = await buildWorkbook(datos, filtros);
+    const fecha = new Date().toISOString().slice(0, 10);
+    await downloadBlob(wb, `Planilla_Metrados_Liquidacion_${fecha}.xlsx`);
+  }
 }

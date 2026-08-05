@@ -409,7 +409,7 @@ function PlanoDropdown({ value, onChange, metrados, filterEspecialidad }: PlanoD
     return () => document.removeEventListener('mousedown', h);
   }, []);
 
-  const options = useMemo(() => {
+  const baseOptions = useMemo(() => {
     let base = metrados;
     if (filterEspecialidad) {
       base = base.filter(m => m.especialidad === filterEspecialidad);
@@ -432,13 +432,18 @@ function PlanoDropdown({ value, onChange, metrados, filterEspecialidad }: PlanoD
       }
     });
 
+    return { uniqueOptions, sinPlanoMotivos };
+  }, [metrados, filterEspecialidad]);
+
+  const options = useMemo(() => {
+    const { uniqueOptions, sinPlanoMotivos } = baseOptions;
     let result = Array.from(uniqueOptions.entries()).map(([val, label]) => ({ val, label }));
     
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(o => o.label.toLowerCase().includes(q));
     }
-
+    
     // Sort alphabetically by label
     result.sort((a, b) => a.label.localeCompare(b.label));
 
@@ -467,7 +472,7 @@ function PlanoDropdown({ value, onChange, metrados, filterEspecialidad }: PlanoD
     });
 
     return result;
-  }, [metrados, filterEspecialidad, search]);
+  }, [baseOptions, search]);
 
   const isActive = Boolean(value);
 
@@ -622,51 +627,62 @@ export default function Metrados() {
 
   const activeFilterCount = [filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano].filter(Boolean).length;
 
-  const uniqueOptions = (key: keyof MetradoRecord) => {
-    if (key === 'especialidad') {
-      const vals = new Set<string>();
-      metrados.forEach(m => { if (m.especialidad) vals.add(m.especialidad); });
-      let opts = Array.from(vals);
-      if (!canSeeAll && user?.especialidades) {
-        opts = opts.filter(opt => user.especialidades.includes(opt));
-      }
-      return opts.sort();
-    }
-    if (key === 'cuadrilla') {
-      const vals = new Set<string>();
-      metrados.forEach(m => {
-        const val = m.cuadrilla;
-        if (!val || val === '-') vals.add('Sin cuadrilla');
-        else vals.add(val);
-
-        if (!m.obrero_nombre || m.obrero_nombre.trim() === '' || m.obrero_nombre === '-') {
-          vals.add('Sin obreros');
+  const filterOptions = useMemo(() => {
+    const getOptions = (key: keyof MetradoRecord) => {
+      if (key === 'especialidad') {
+        const vals = new Set<string>();
+        metrados.forEach(m => { if (m.especialidad) vals.add(m.especialidad); });
+        let opts = Array.from(vals);
+        if (!canSeeAll && user?.especialidades) {
+          opts = opts.filter(opt => user.especialidades.includes(opt));
         }
-      });
-      const arr = Array.from(vals);
-      arr.sort((a, b) => {
-        const aSin = a.startsWith('Sin ');
-        const bSin = b.startsWith('Sin ');
-        if (aSin && !bSin) return -1;
-        if (!aSin && bSin) return 1;
-        return a.localeCompare(b);
-      });
-      return arr;
-    }
+        return opts.sort();
+      }
+      if (key === 'cuadrilla') {
+        const vals = new Set<string>();
+        metrados.forEach(m => {
+          const val = m.cuadrilla;
+          if (!val || val === '-') vals.add('Sin cuadrilla');
+          else vals.add(val);
 
-    const vals = new Set(metrados.map(m => m[key]).filter(Boolean));
-    const arr = Array.from(vals) as string[];
-    arr.sort((a, b) => a.localeCompare(b));
-    return arr;
-  };
+          if (!m.obrero_nombre || m.obrero_nombre.trim() === '' || m.obrero_nombre === '-') {
+            vals.add('Sin obreros');
+          }
+        });
+        const arr = Array.from(vals);
+        arr.sort((a, b) => {
+          const aSin = a.startsWith('Sin ');
+          const bSin = b.startsWith('Sin ');
+          if (aSin && !bSin) return -1;
+          if (!aSin && bSin) return 1;
+          return a.localeCompare(b);
+        });
+        return arr;
+      }
+
+      const vals = new Set(metrados.map(m => m[key]).filter(Boolean));
+      const arr = Array.from(vals) as string[];
+      arr.sort((a, b) => a.localeCompare(b));
+      return arr;
+    };
+    
+    return {
+      especialidad: getOptions('especialidad'),
+      firma_ingeniero: getOptions('firma_ingeniero'),
+      cuadrilla: getOptions('cuadrilla'),
+      frente_trabajo: getOptions('frente_trabajo'),
+      bloque_sector: getOptions('bloque_sector'),
+      nivel_piso: getOptions('nivel_piso'),
+    };
+  }, [metrados, canSeeAll, user]);
 
   const FILTER_CONFIG = [
-    { label: 'Especialidad', options: uniqueOptions('especialidad'), value: filterEspecialidad, onChange: setFilterEspecialidad, locked: !!lockedEspecialidad },
-    { label: 'Autor', options: uniqueOptions('firma_ingeniero'), value: filterAutor, onChange: setFilterAutor },
-    { label: 'Cuadrilla', options: uniqueOptions('cuadrilla'), value: filterCuadrilla, onChange: setFilterCuadrilla },
-    { label: 'Frentes', options: uniqueOptions('frente_trabajo'), value: filterFrente, onChange: setFilterFrente },
-    { label: 'Bloques', options: uniqueOptions('bloque_sector'), value: filterBloque, onChange: setFilterBloque },
-    { label: 'Niveles', options: uniqueOptions('nivel_piso'), value: filterNivel, onChange: setFilterNivel },
+    { label: 'Especialidad', options: filterOptions.especialidad, value: filterEspecialidad, onChange: setFilterEspecialidad, locked: !!lockedEspecialidad },
+    { label: 'Autor', options: filterOptions.firma_ingeniero, value: filterAutor, onChange: setFilterAutor },
+    { label: 'Cuadrilla', options: filterOptions.cuadrilla, value: filterCuadrilla, onChange: setFilterCuadrilla },
+    { label: 'Frentes', options: filterOptions.frente_trabajo, value: filterFrente, onChange: setFilterFrente },
+    { label: 'Bloques', options: filterOptions.bloque_sector, value: filterBloque, onChange: setFilterBloque },
+    { label: 'Niveles', options: filterOptions.nivel_piso, value: filterNivel, onChange: setFilterNivel },
   ];
 
   const { setEditingMetrado } = useMetradosStore();

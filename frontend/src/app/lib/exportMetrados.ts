@@ -252,7 +252,7 @@ async function downloadBlob(wb: ExcelJS.Workbook, filename: string) {
 }
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
-async function buildWorkbook(rows: any[], logoBuffer: ArrayBuffer | null): Promise<ExcelJS.Workbook> {
+export async function buildWorkbook(rows: any[], logoBuffer: ArrayBuffer | null): Promise<ExcelJS.Workbook> {
   const wb = new ExcelJS.Workbook();
   wb.creator = 'Sistema Metrados';
   const ws = wb.addWorksheet('Metrados', {
@@ -373,27 +373,48 @@ async function buildWorkbook(rows: any[], logoBuffer: ArrayBuffer | null): Promi
 }
 
 // ─── Función pública ──────────────────────────────────────────────────────────
-/**
- * Uso en Metrados.tsx:
- *
- *   import { exportarMetradosExcel } from '../../lib/exportMetrados';
- *   await exportarMetradosExcel({ especialidad: filterEspecialidad || undefined });
- */
 export async function exportarMetradosExcel(
   filtros: FiltrosExport = {},
   localData?: any[]
 ): Promise<void> {
-  const [datos, logoBuffer] = await Promise.all([
-    fetchDatos(filtros, localData),
-    loadLogoBuffer(),
-  ]);
-
+  const datos = await fetchDatos(filtros, localData);
   if (!datos.length) {
     alert('Sin registros para los filtros seleccionados.');
     return;
   }
+  const logoBuffer = await loadLogoBuffer();
 
-  const wb = await buildWorkbook(datos, logoBuffer);
-  const fecha = new Date().toISOString().slice(0, 10);
-  await downloadBlob(wb, `Metrados_${fecha}.xlsx`);
+  if (typeof window !== 'undefined' && window.Worker) {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL('../workers/exportWorker.ts', import.meta.url), { type: 'module' });
+      worker.onmessage = (e) => {
+        if (e.data.success) {
+          const blob = new Blob([e.data.buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const fecha = new Date().toISOString().slice(0, 10);
+          a.download = `Metrados_${fecha}.xlsx`;
+          a.click();
+          URL.revokeObjectURL(url);
+          worker.terminate();
+          resolve();
+        } else {
+          worker.terminate();
+          reject(new Error(e.data.error));
+        }
+      };
+      worker.onerror = (err) => {
+        worker.terminate();
+        reject(err);
+      };
+      worker.postMessage({ type: 'METRADOS', datos, filtros, logoBuffer });
+    });
+  } else {
+    const wb = await buildWorkbook(datos, logoBuffer);
+    const fecha = new Date().toISOString().slice(0, 10);
+    await downloadBlob(wb, `Metrados_${fecha}.xlsx`);
+  }
 }
