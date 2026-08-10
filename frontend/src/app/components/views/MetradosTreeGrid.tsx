@@ -171,7 +171,7 @@ const MetradoRow = React.memo(({
         </div>
       </td>
       <td className="px-1 py-1.5 whitespace-nowrap opacity-80 text-center" style={{ letterSpacing: '-0.5px' }}>
-        {m.fecha_ejecucion ? `${m.fecha_ejecucion.split('-')[2]}/${m.fecha_ejecucion.split('-')[1]}` : ''}
+        {m.fecha_ejecucion ? `${m.fecha_ejecucion.split('-')[2]}/${m.fecha_ejecucion.split('-')[1]}/${m.fecha_ejecucion.split('-')[0].slice(-2)}` : ''}
       </td>
       
       <td className="px-1.5 py-1.5">

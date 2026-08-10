@@ -151,9 +151,13 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
         ? m.obrero_nombre
         : buildObrerosFromCuadrillaName(m.cuadrilla || '');
 
+      const codigo = m.snapshot_codigo || p?.codigo_expediente || '';
+      const desc = m.snapshot_descripcion || p?.descripcion || '';
+      const partidaDesc = (codigo || desc) ? `${codigo} - ${desc}` : '-';
+
       return {
         ...m,
-        _partida_desc: `${m.snapshot_codigo || ''} - ${m.snapshot_descripcion || ''}`,
+        _partida_desc: partidaDesc,
         _detalle_completo: [m.elemento_desc, m.detalle_desc].filter(Boolean).join(' / '),
         _modificacion: p?.modificacion || '',
         firma_ingeniero: getInitials(m.firma_ingeniero),
@@ -175,7 +179,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
       resultado_parcial, nro_repeticiones, acero_diametro, resultado_total,
       unidad, plano_sist, plano_num, sin_plano, obs_motivo, obs_detalle, firma_ingeniero,
       metrados_obreros ( personal_obrero ( nombres_completos, categoria_laboral ) ),
-      catalogo_partidas ( modificacion )
+      catalogo_partidas ( modificacion, codigo_expediente, descripcion )
     `)
     .order('grado',           { ascending: true })
     .order('fecha_ejecucion', { ascending: true });
@@ -194,9 +198,14 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
 
   return (data ?? []).map((m: any) => {
     const espAbbr = espMap.get(m.especialidad) || FALLBACK_ESP_ABBR[m.especialidad] || m.especialidad?.substring(0, 3).toUpperCase() || 'E?';
+    
+    const codigo = m.snapshot_codigo || m.catalogo_partidas?.codigo_expediente || '';
+    const desc = m.snapshot_descripcion || m.catalogo_partidas?.descripcion || '';
+    const partidaDesc = (codigo || desc) ? `${codigo} - ${desc}` : '-';
+
     return {
       ...m,
-      _partida_desc: `${m.snapshot_codigo || ''} - ${m.snapshot_descripcion || ''}`,
+      _partida_desc: partidaDesc,
       _detalle_completo: [m.elemento_desc, m.detalle_desc].filter(Boolean).join(' / '),
       _modificacion: m.catalogo_partidas?.modificacion || '',
       firma_ingeniero: getInitials(m.firma_ingeniero),

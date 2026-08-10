@@ -768,12 +768,17 @@ export default function Metrados() {
     }
 
     return baseData.filter(m => {
+      // 0.5 Filter orphans
+      if (!partidasMap.has(m.partida_id)) return false;
+
       // 1. Search term
       if (searchLower) {
         const [, mm, dd] = (m.fecha_ejecucion || '').split('-');
-        const fechaLocalStr = dd && mm ? `${dd}/${mm}` : '';
-        const fechaInvertida = dd && mm ? `${dd}-${mm}-${m.fecha_ejecucion?.split('-')[0]}` : '';
-        const fechaInvertidaSlash = dd && mm ? `${dd}/${mm}/${m.fecha_ejecucion?.split('-')[0]}` : '';
+        const yyyy = m.fecha_ejecucion ? m.fecha_ejecucion.split('-')[0] : '';
+        const yy = yyyy.slice(-2);
+        const fechaLocalStr = dd && mm ? `${dd}/${mm}/${yy}` : '';
+        const fechaInvertida = dd && mm ? `${dd}-${mm}-${yyyy}` : '';
+        const fechaInvertidaSlash = dd && mm ? `${dd}/${mm}/${yyyy}` : '';
 
         const matches = m.snapshot_codigo?.toLowerCase().includes(searchLower) ||
                         m.snapshot_descripcion?.toLowerCase().includes(searchLower) ||

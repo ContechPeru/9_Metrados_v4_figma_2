@@ -236,7 +236,11 @@ export function MetradosForm() {
     setSelectedPartida(p);
     setSearchPartida(`${p.codigo_expediente} - ${p.descripcion}`);
     setShowPartidaDropdown(false);
-    limpiarCamposNum(); // Auto-clean
+    
+    // Auto-clean solo si NO estamos editando un metrado existente
+    if (!editingMetrado) {
+      limpiarCamposNum();
+    }
 
     // AUTO-ASIGNAR ESPECIALIDAD
     let encontrada = '';

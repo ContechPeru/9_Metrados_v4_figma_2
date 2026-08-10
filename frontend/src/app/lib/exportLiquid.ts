@@ -101,6 +101,8 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
       const p = partidasMap.get(m.partida_id);
       return {
         ...m,
+        snapshot_codigo: m.snapshot_codigo || p?.codigo_expediente || '',
+        snapshot_descripcion: m.snapshot_descripcion || p?.descripcion || '',
         _modificacion: p?.modificacion || ''
       };
     });
@@ -115,7 +117,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho, nro_repeticiones,
       acero_diametro, hvac_factor, resultado_total, unidad, firma_ingeniero,
       metrados_obreros ( personal_obrero ( nombres_completos, categoria_laboral ) ),
-      catalogo_partidas ( modificacion, precio_unitario_base, pu_actual )
+      catalogo_partidas ( modificacion, precio_unitario_base, pu_actual, codigo_expediente, descripcion )
     `)
     .order('grado',           { ascending: true })
     .order('fecha_ejecucion', { ascending: true });
@@ -134,6 +136,8 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
 
   return (data ?? []).map((m: any) => ({
     ...m,
+    snapshot_codigo: m.snapshot_codigo || m.catalogo_partidas?.codigo_expediente || '',
+    snapshot_descripcion: m.snapshot_descripcion || m.catalogo_partidas?.descripcion || '',
     _modificacion: (m.catalogo_partidas && !Array.isArray(m.catalogo_partidas) ? m.catalogo_partidas.modificacion : null) || ''
   }));
 }
