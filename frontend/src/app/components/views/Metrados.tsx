@@ -15,6 +15,7 @@ import { exportarFormato1Excel } from '../../lib/export1';
 import { exportarResumenExcel } from '../../lib/exportResumen';
 import { exportarSaldosExcel } from '../../lib/exportSaldos';
 import { exportarLiquidExcel } from '../../lib/exportLiquid';
+import { ModalCambioPartida } from './ModalCambioPartida';
 import MetradosTreeGrid from './MetradosTreeGrid';
 import { ActiveUsers } from '../ActiveUsers';
 
@@ -593,6 +594,7 @@ export default function Metrados() {
   }, [searchTerm]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isSubmittingMasivo, setIsSubmittingMasivo] = useState(false);
+  const [isModalCambioOpen, setIsModalCambioOpen] = useState(false);
 
   const handleLiberarMasivo = async (estado: boolean) => {
     setIsSubmittingMasivo(true);
@@ -1153,6 +1155,13 @@ export default function Metrados() {
             <div className="flex items-center gap-2 mr-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
               <span className="text-[11px] font-bold text-blue-800 whitespace-nowrap">{selectedIds.size} selec.</span>
               <button
+                onClick={() => setIsModalCambioOpen(true)}
+                disabled={isSubmittingMasivo}
+                className="flex items-center justify-center gap-1 px-3 py-1.5 min-w-[70px] min-h-[32px] rounded text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors text-[11px] font-bold disabled:opacity-50"
+              >
+                Cambiar Partida
+              </button>
+              <button
                 onClick={() => handleLiberarMasivo(true)}
                 disabled={isSubmittingMasivo}
                 className="flex items-center justify-center gap-1 px-3 py-1.5 min-w-[70px] min-h-[32px] rounded text-white bg-green-600 hover:bg-green-700 transition-colors text-[11px] font-bold disabled:opacity-50"
@@ -1266,6 +1275,15 @@ export default function Metrados() {
           viewMode={viewMode}
         />
       </div>
+      <ModalCambioPartida 
+        isOpen={isModalCambioOpen}
+        onClose={() => setIsModalCambioOpen(false)}
+        selectedIds={Array.from(selectedIds)}
+        onSuccess={() => {
+          setIsModalCambioOpen(false);
+          setSelectedIds(new Set());
+        }}
+      />
     </div>
   );
 }

@@ -79,6 +79,7 @@ interface MetradosState {
   deleteMetrado: (id: string) => Promise<{success: boolean; error?: string}>;
   toggleLiberarMetrado: (id: string, is_liberado: boolean) => Promise<{success: boolean; error?: string}>;
   liberarMetradosMasivo: (ids: string[], is_liberado: boolean) => Promise<{success: boolean; error?: string}>;
+  cambiarPartidaMasivo: (ids: string[], partida_id: string, snapshot_codigo: string, snapshot_descripcion: string, unidad: string) => Promise<{success: boolean; error?: string}>;
   editingMetrado: MetradoRecord | null;
   setEditingMetrado: (metrado: MetradoRecord | null) => void;
   createPartidaPersonalizada: (partida: Partial<Partida> & { precio_unitario_base?: number }) => Promise<{success: boolean; error?: string}>;
@@ -391,6 +392,47 @@ export const useMetradosStore = create<MetradosState>((set, get) => ({
     set(state => ({
       metrados: state.metrados.map(m => idsSet.has(m.id) ? { ...m, is_liberado } : m)
     }));
+    return { success: true };
+  },
+
+  cambiarPartidaMasivo: async (ids: string[], partida_id: string, snapshot_codigo: string, snapshot_descripcion: string, unidad: string) => {
+    if (ids.length === 0) return { success: true };
+    
+    // Obtenemos si la partida nueva NO es acero, para resetear el acero_diametro a null
+    const partida = get().partidas.find(p => p.id === partida_id);
+    const noEsAcero = partida?.tipo_calculo !== 'ACERO';
+
+    const updates: any = {
+      partida_id,
+      snapshot_codigo,
+      snapshot_descripcion,
+      unidad
+    };
+
+    if (noEsAcero) {
+      updates.acero_diametro = null;
+    }
+
+    const { error } = await (supabase as any)
+      .from('registro_metrados')
+      .update(updates)
+      .in('id', ids);
+
+    if (error) return { success: false, error: error.message };
+
+    const idsSet = new Set(ids);
+    set(state => ({
+      metrados: state.metrados.map(m => {
+        if (idsSet.has(m.id)) {
+          return {
+            ...m,
+            ...updates
+          };
+        }
+        return m;
+      })
+    }));
+
     return { success: true };
   },
 

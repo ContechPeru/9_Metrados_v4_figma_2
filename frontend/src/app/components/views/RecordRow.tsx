@@ -35,8 +35,8 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
       medida_ancho_empalme: numAncho,
       medida_alto_gancho: numAlt,
       nro_repeticiones: editValues.veces,
-      resultado_parcial: parseFloat(parcial.toFixed(3)),
-      resultado_total: parseFloat(total.toFixed(3))
+      resultado_parcial: parcial,
+      resultado_total: total
     };
 
     const res = await updateMetrado(record.id, updates);
@@ -107,9 +107,9 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_largo_area || '-'}</td>
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_ancho_empalme || '-'}</td>
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_alto_gancho || '-'}</td>
-      <td className="px-3 py-2 text-xs text-center bg-gray-50 text-gray-800 font-mono">{record.resultado_parcial}</td>
+      <td className="px-3 py-2 text-xs text-center bg-gray-50 text-gray-800 font-mono">{record.resultado_parcial?.toFixed(2)}</td>
       <td className="px-3 py-2 text-xs text-center text-blue-600">{record.nro_repeticiones}</td>
-      <td className="px-3 py-2 text-xs font-bold text-center bg-green-50 text-green-700 font-mono">{record.resultado_total}</td>
+      <td className="px-3 py-2 text-xs font-bold text-center bg-green-50 text-green-700 font-mono">{record.resultado_total?.toFixed(2)}</td>
       
       <td className="px-3 py-2 text-xs flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button onClick={() => setIsEditing(true)} className="text-blue-500 hover:bg-blue-100 p-1 rounded"><Edit2 size={14} /></button>

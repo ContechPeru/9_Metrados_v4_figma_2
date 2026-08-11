@@ -154,8 +154,8 @@ export default function ImportacionExcel() {
         medida_ancho_empalme: d.medida_ancho_empalme,
         medida_alto_gancho: d.medida_alto_gancho,
         nro_repeticiones: d.nro_repeticiones,
-        resultado_parcial: parseFloat(d.resultado_parcial.toFixed(3)),
-        resultado_total: parseFloat(d.resultado_total.toFixed(3)),
+        resultado_parcial: d.resultado_parcial,
+        resultado_total: d.resultado_total,
         fecha_ejecucion: d.fecha_ejecucion,
       };
       if (d.obreros_ids.length > 0) {
