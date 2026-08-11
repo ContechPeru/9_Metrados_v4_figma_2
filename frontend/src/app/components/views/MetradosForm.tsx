@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Calculator, Check, Plus, Trash2, Building2, X, ChevronsUpDown, PlusCircle } from 'lucide-react';
+import { Search, Calculator, Check, Plus, Trash2, Building2, X, ChevronsUpDown, PlusCircle, Lock, Unlock } from 'lucide-react';
 import { Command } from 'cmdk';
 import { useMetradosForm } from '../../hooks/useMetradosForm';
 import { usePersonalStore } from '../../store/usePersonalStore';
@@ -113,6 +113,7 @@ export function MetradosForm() {
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const [isModalPartidaOpen, setIsModalPartidaOpen] = useState(false);
   const [soloLiberados, setSoloLiberados] = useState(false);
+  const [isPartidaCreationLocked, setIsPartidaCreationLocked] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const hvacDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -373,14 +374,29 @@ export function MetradosForm() {
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
               <label className="text-[10px] text-gray-500 block">Buscador Maestro de Partida</label>
-              <button 
-                type="button"
-                onClick={() => setIsModalPartidaOpen(true)}
-                className="text-[10px] flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-1.5 py-0.5 rounded font-bold transition-colors"
-                title="Crear una nueva partida desde cero"
-              >
-                <Plus size={10} strokeWidth={3} /> Nuevo Ítem
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setIsPartidaCreationLocked(!isPartidaCreationLocked)}
+                  className={`text-[10px] p-1 rounded transition-colors ${isPartidaCreationLocked ? 'text-slate-400 hover:bg-slate-100' : 'text-green-600 bg-green-50 hover:bg-green-100'}`}
+                  title={isPartidaCreationLocked ? 'Desbloquear creación de partida' : 'Bloquear creación'}
+                >
+                  {isPartidaCreationLocked ? <Lock size={12} strokeWidth={2.5} /> : <Unlock size={12} strokeWidth={2.5} />}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setIsModalPartidaOpen(true)}
+                  disabled={isPartidaCreationLocked}
+                  className={`text-[10px] flex items-center gap-1 px-1.5 py-0.5 rounded font-bold transition-colors ${
+                    isPartidaCreationLocked 
+                      ? 'text-slate-400 bg-slate-50 cursor-not-allowed opacity-60'
+                      : 'text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100'
+                  }`}
+                  title="Crear una nueva partida desde cero"
+                >
+                  <Plus size={10} strokeWidth={3} /> Nuevo Ítem
+                </button>
+              </div>
             </div>
             <div className="relative" ref={dropdownRef}>
               <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />

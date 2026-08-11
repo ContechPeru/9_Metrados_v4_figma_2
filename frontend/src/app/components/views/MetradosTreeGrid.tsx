@@ -4,6 +4,11 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { ChevronRight, ChevronDown, Edit2, Trash2 } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
+const formatNum = (val: number | null | undefined) => {
+  if (val == null) return '-';
+  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 3, useGrouping: false }).format(val);
+};
+
 interface MetradosTreeGridProps {
   metrados: MetradoRecord[];
   partidas: Partida[];
@@ -103,7 +108,7 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
       
       {/* Parcial Totalizado Bottom-Up */}
       <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-        {node.parcialTotal > 0 ? node.parcialTotal.toFixed(2) : ''}
+        {node.parcialTotal > 0 ? formatNum(node.parcialTotal) : ''}
       </td>
 
       {isValorizada && (
@@ -195,14 +200,14 @@ const MetradoRow = React.memo(({
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_largo_area || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_ancho_empalme || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_alto_gancho || '-'}</td>
-      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.resultado_parcial?.toFixed(2) || '-'}</td>
+      <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{formatNum(m.resultado_parcial)}</td>
       
       <td className="px-1.5 py-1.5 text-center font-medium opacity-80 truncate max-w-[100px]">{m.autor_nombre?.split(' ')[0] || m.firma_ingeniero || '-'}</td>
       
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.nro_repeticiones || '-'}</td>
       
       <td className="px-1.5 py-1.5 text-left opacity-90 border-l border-slate-100/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-        {m.resultado_total ? m.resultado_total.toFixed(2) : '-'}
+        {formatNum(m.resultado_total)}
       </td>
       
       <td className="px-2 py-1 whitespace-nowrap">

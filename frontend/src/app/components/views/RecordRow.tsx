@@ -2,8 +2,12 @@ import { useState } from 'react';
 import { Edit2, Save, X, Trash2 } from 'lucide-react';
 import type { MetradoRecord } from '../../store/useMetradosStore';
 import { useMetradosStore } from '../../store/useMetradosStore';
-
 export function RecordRow({ record }: { record: MetradoRecord }) {
+  const formatNum = (val: number | null | undefined) => {
+    if (val == null) return '-';
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 3, useGrouping: false }).format(val);
+  };
+
   const { updateMetrado, deleteMetrado } = useMetradosStore();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -107,9 +111,9 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_largo_area || '-'}</td>
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_ancho_empalme || '-'}</td>
       <td className="px-3 py-2 text-xs text-center text-gray-600">{record.medida_alto_gancho || '-'}</td>
-      <td className="px-3 py-2 text-xs text-center bg-gray-50 text-gray-800 font-mono">{record.resultado_parcial?.toFixed(2)}</td>
+      <td className="px-3 py-2 text-xs text-center bg-gray-50 text-gray-800 font-mono">{formatNum(record.resultado_parcial)}</td>
       <td className="px-3 py-2 text-xs text-center text-blue-600">{record.nro_repeticiones}</td>
-      <td className="px-3 py-2 text-xs font-bold text-center bg-green-50 text-green-700 font-mono">{record.resultado_total?.toFixed(2)}</td>
+      <td className="px-3 py-2 text-xs font-bold text-center bg-green-50 text-green-700 font-mono">{formatNum(record.resultado_total)}</td>
       
       <td className="px-3 py-2 text-xs flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button onClick={() => setIsEditing(true)} className="text-blue-500 hover:bg-blue-100 p-1 rounded"><Edit2 size={14} /></button>
