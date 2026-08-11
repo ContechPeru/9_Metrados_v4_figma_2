@@ -16,13 +16,22 @@ export default function App() {
     setIsInitializing(false);
   }, [checkAuth]);
 
-  // Carga masiva de catálogos cuando entra el usuario
+  // Carga masiva de catálogos y metrados desde la base de datos Supabase cuando entra el usuario
   useEffect(() => {
     if (isAuthenticated) {
       const loadAll = async () => {
-        // Asumiendo que useMetradosStore y usePersonalStore tienen fetchData
-        // useMetradosStore.getState().fetchData();
-        // usePersonalStore.getState().fetchData();
+        try {
+          const { fetchCatalogosGlobales, fetchMetrados } = (await import('./store/useMetradosStore')).useMetradosStore.getState();
+          const { fetchPersonal } = (await import('./store/usePersonalStore')).usePersonalStore.getState();
+
+          await Promise.all([
+            fetchCatalogosGlobales(),
+            fetchMetrados(),
+            fetchPersonal()
+          ]);
+        } catch (error) {
+          console.error("Error al cargar datos desde la base de datos:", error);
+        }
       };
       loadAll();
     }

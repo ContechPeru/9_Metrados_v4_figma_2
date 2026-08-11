@@ -97,12 +97,12 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
       
       {isDetallada && (
         <>
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Largo */}
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Ancho */}
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Alto */}
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Parcial */}
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* Autor */}
-          <td className="px-1.5 py-2 border-b border-slate-200"></td> {/* N Veces */}
+          <td className="px-1.5 py-2 border-b border-slate-200" />
+          <td className="px-1.5 py-2 border-b border-slate-200" />
+          <td className="px-1.5 py-2 border-b border-slate-200" />
+          <td className="px-1.5 py-2 border-b border-slate-200" />
+          <td className="px-1.5 py-2 border-b border-slate-200" />
+          <td className="px-1.5 py-2 border-b border-slate-200" />
         </>
       )}
       

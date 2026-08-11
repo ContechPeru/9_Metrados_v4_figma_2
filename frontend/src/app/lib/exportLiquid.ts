@@ -111,7 +111,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
   let q = supabase
     .from('registro_metrados')
     .select(`
-      grado, fecha_ejecucion, especialidad, frente_trabajo, bloque_sector,
+      grado, fecha_ejecucion, especialidad, frente_trabajo, ambiente, bloque_sector,
       nivel_piso, cuadrilla, elemento_desc, detalle_desc, observacion,
       snapshot_codigo, snapshot_descripcion,
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho, nro_repeticiones,
@@ -303,7 +303,7 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
         } else if (c === 17) {
           cell.value = m.nivel_piso; cell.alignment = aln('center');
         } else if (c === 18) {
-          cell.value = m.elemento_desc; cell.alignment = aln('left', true);
+          cell.value = m.ambiente || m.elemento_desc || ''; cell.alignment = aln('left', true);
         } else if (c === 19) {
           cell.value = m.observacion || ''; cell.alignment = aln('left', true);
         } else if (c === 20) {

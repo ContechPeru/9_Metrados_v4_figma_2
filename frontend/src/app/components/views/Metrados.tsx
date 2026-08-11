@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useRef } from 'react';
 import type { MetradoRecord } from '../../store/useMetradosStore';
 import { useMetradosStore } from '../../store/useMetradosStore';
 import { 
-  Search, ChevronDown, FileSpreadsheet, Loader2,
+  Search, ChevronDown, ChevronLeft, ChevronRight, FileSpreadsheet, Loader2,
   Download, Calendar, X, PanelRightOpen, PanelRightClose,
   FileText, FileCode2, ClipboardList, Printer, LayoutList, ArrowUp, ArrowDown, AlertCircle, Check
 } from 'lucide-react';
@@ -627,14 +627,19 @@ export default function Metrados() {
   }, []);
 
 
+  const storeTotalCount = useMetradosStore(state => state.totalCount);
+  const [pageSize, setPageSize] = useState<number>(3000);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const activeFilterCount = [filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano].filter(Boolean).length;
 
   const filterOptions = useMemo(() => {
     const getOptions = (key: keyof MetradoRecord) => {
       if (key === 'especialidad') {
-        const vals = new Set<string>();
-        metrados.forEach(m => { if (m.especialidad) vals.add(m.especialidad); });
-        let opts = Array.from(vals);
+        const { especialidades } = useMetradosStore.getState();
+        let opts = especialidades.length > 0
+          ? especialidades.map(e => e.nombre)
+          : Array.from(new Set(metrados.map(m => m.especialidad).filter(Boolean)));
         if (!canSeeAll && user?.especialidades) {
           opts = opts.filter(opt => user.especialidades.includes(opt));
         }
@@ -773,7 +778,53 @@ export default function Metrados() {
       // 0.5 Filter orphans
       if (!partidasMap.has(m.partida_id)) return false;
 
-      // 1. Search term
+      // 1. Filtrado ultra-rápido por especialidad y campos exactos (descarte instantáneo en 0-1ms)
+      if (filterEspecialidad && m.especialidad !== filterEspecialidad) return false;
+      if (filterAutor && m.firma_ingeniero !== filterAutor) return false;
+      if (filterFrente && m.frente_trabajo !== filterFrente) return false;
+      if (filterBloque && m.bloque_sector !== filterBloque) return false;
+      if (filterNivel && m.nivel_piso !== filterNivel) return false;
+
+      // 2. Rango de fechas (usando effectiveDateRange)
+      if (effectiveDateRange.startStr || effectiveDateRange.endStr) {
+        if (!m.fecha_ejecucion) return false;
+        if (effectiveDateRange.startStr && m.fecha_ejecucion < effectiveDateRange.startStr) return false;
+        if (effectiveDateRange.endStr && m.fecha_ejecucion > effectiveDateRange.endStr) return false;
+      }
+
+      // 3. Estado (Liberado / No Liberado)
+      if (estadoTab === 'Liberados' && m.is_liberado !== true) return false;
+      if (estadoTab === 'No Liberados' && m.is_liberado === true) return false;
+
+      // 4. Cuadrilla
+      if (filterCuadrilla) {
+        if (filterCuadrilla === 'Sin cuadrilla') {
+          if (m.cuadrilla && m.cuadrilla !== '-') return false;
+        } else if (filterCuadrilla === 'Sin obreros') {
+          if (m.obrero_nombre && m.obrero_nombre.trim() !== '' && m.obrero_nombre !== '-') return false;
+        } else {
+          if (m.cuadrilla !== filterCuadrilla) return false;
+        }
+      }
+
+      // 5. Contexto (Expediente / Adicionales)
+      if (contextoTab === 'Expediente' || contextoTab === 'ACT/PC') {
+        const p = partidasMap.get(m.partida_id);
+        const isPC = p?.es_adicional || p?.modificacion === 'PC' || m.snapshot_codigo?.startsWith('PC');
+        if (contextoTab === 'Expediente' && isPC) return false;
+        if (contextoTab === 'ACT/PC' && !isPC) return false;
+      }
+
+      // 6. Plano
+      if (parsedPlano) {
+        if (parsedPlano.sinPlano) {
+          if (!m.sin_plano || (m.obs_motivo || 'otros') !== parsedPlano.motivo) return false;
+        } else {
+          if (m.sin_plano || String(m.plano_num) !== parsedPlano.n || (m.plano_sist || '') !== parsedPlano.s) return false;
+        }
+      }
+
+      // 7. Search term (Heavy string processing last)
       if (searchLower) {
         const [, mm, dd] = (m.fecha_ejecucion || '').split('-');
         const yyyy = m.fecha_ejecucion ? m.fecha_ejecucion.split('-')[0] : '';
@@ -793,57 +844,34 @@ export default function Metrados() {
         if (!matches) return false;
       }
 
-      // 2. Especialidad
-      if (filterEspecialidad && m.especialidad !== filterEspecialidad) return false;
-
-      // 3. Estado (Liberado / No Liberado)
-      if (estadoTab === 'Liberados' && m.is_liberado !== true) return false;
-      if (estadoTab === 'No Liberados' && m.is_liberado === true) return false;
-
-      // 4. Contexto (Expediente / Adicionales)
-      if (contextoTab === 'Expediente' || contextoTab === 'ACT/PC') {
-        const p = partidasMap.get(m.partida_id);
-        const isPC = p?.es_adicional || p?.modificacion === 'PC' || m.snapshot_codigo?.startsWith('PC');
-        if (contextoTab === 'Expediente' && isPC) return false;
-        if (contextoTab === 'ACT/PC' && !isPC) return false;
-      }
-
-      // 5. Filtros exactos
-      if (filterAutor && m.firma_ingeniero !== filterAutor) return false;
-      if (filterFrente && m.frente_trabajo !== filterFrente) return false;
-      if (filterBloque && m.bloque_sector !== filterBloque) return false;
-      if (filterNivel && m.nivel_piso !== filterNivel) return false;
-
-      // 6. Cuadrilla
-      if (filterCuadrilla) {
-        if (filterCuadrilla === 'Sin cuadrilla') {
-          if (m.cuadrilla && m.cuadrilla !== '-') return false;
-        } else if (filterCuadrilla === 'Sin obreros') {
-          if (m.obrero_nombre && m.obrero_nombre.trim() !== '' && m.obrero_nombre !== '-') return false;
-        } else {
-          if (m.cuadrilla !== filterCuadrilla) return false;
-        }
-      }
-
-      // 7. Plano
-      if (parsedPlano) {
-        if (parsedPlano.sinPlano) {
-          if (!m.sin_plano || (m.obs_motivo || 'otros') !== parsedPlano.motivo) return false;
-        } else {
-          if (m.sin_plano || String(m.plano_num) !== parsedPlano.n || (m.plano_sist || '') !== parsedPlano.s) return false;
-        }
-      }
-
-      // 8. Rango de fechas (usando effectiveDateRange)
-      if (effectiveDateRange.startStr || effectiveDateRange.endStr) {
-        if (!m.fecha_ejecucion) return false;
-        if (effectiveDateRange.startStr && m.fecha_ejecucion < effectiveDateRange.startStr) return false;
-        if (effectiveDateRange.endStr && m.fecha_ejecucion > effectiveDateRange.endStr) return false;
-      }
-
       return true;
     });
   }, [metrados, partidasMap, debouncedSearchTerm, estadoTab, contextoTab, filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano, effectiveDateRange]);
+
+  const hasActiveFilters = activeFilterCount > 0 || Boolean(debouncedSearchTerm) || period !== 'todo' || Boolean(dateRange.start) || Boolean(dateRange.end) || estadoTab !== 'Todos' || contextoTab !== 'Todo';
+
+  // Reset a página 1 al cambiar cualquier filtro
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterEspecialidad, filterAutor, filterFrente, filterBloque, filterNivel, filterCuadrilla, filterPlano, debouncedSearchTerm, dateRange, period, estadoTab, contextoTab]);
+
+  const totalPages = useMemo(() => {
+    if (pageSize <= 0) return 1;
+    return Math.max(1, Math.ceil(filteredMetrados.length / pageSize));
+  }, [filteredMetrados.length, pageSize]);
+
+  const paginatedMetrados = useMemo(() => {
+    if (pageSize <= 0) return filteredMetrados;
+    const start = (currentPage - 1) * pageSize;
+    return filteredMetrados.slice(start, start + pageSize);
+  }, [filteredMetrados, currentPage, pageSize]);
+
+  const displayRecordCount = useMemo(() => {
+    if (hasActiveFilters) {
+      return filteredMetrados.length;
+    }
+    return storeTotalCount || filteredMetrados.length;
+  }, [hasActiveFilters, filteredMetrados.length, storeTotalCount]);
 
   useEffect(() => {
     if (period === 'todo' && !dateRange.start && !dateRange.end) {
@@ -1256,7 +1284,7 @@ export default function Metrados() {
           </div>
         )}
         <MetradosTreeGrid 
-          metrados={filteredMetrados} 
+          metrados={paginatedMetrados} 
           partidas={useMetradosStore.getState().partidas} 
           onEdit={startEditing} 
           onDelete={(m) => handleDelete(String(m.id), m.fecha_ejecucion, m.firma_ingeniero || '')} 
@@ -1275,6 +1303,62 @@ export default function Metrados() {
           viewMode={viewMode}
         />
       </div>
+
+      {/* ── FOOTER PAGINACIÓN ─────────────────────────────────────── */}
+      <div className="flex items-center justify-between px-4 py-1.5 bg-white border-t border-gray-200 flex-shrink-0 text-xs text-gray-600 shadow-sm relative z-20">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage <= 1}
+            className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 border border-gray-200 transition-colors"
+            title="Página anterior"
+          >
+            <ChevronLeft size={14} />
+          </button>
+          <span>
+            Page <input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={currentPage}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                  setCurrentPage(val);
+                }
+              }}
+              className="w-12 text-center border border-gray-300 rounded px-1 py-0.5 font-medium text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            /> of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage >= totalPages}
+            className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 border border-gray-200 transition-colors"
+            title="Página siguiente"
+          >
+            <ChevronRight size={14} />
+          </button>
+
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="ml-2 border border-gray-300 rounded px-2 py-0.5 text-xs bg-white text-gray-700 font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value={1000}>1000 rows</option>
+            <option value={3000}>3000 rows</option>
+            <option value={5000}>5000 rows</option>
+            <option value={0}>Todas las filas</option>
+          </select>
+        </div>
+
+        <div className="font-semibold text-slate-700">
+          {displayRecordCount.toLocaleString('en-US')} records
+        </div>
+      </div>
+
       <ModalCambioPartida 
         isOpen={isModalCambioOpen}
         onClose={() => setIsModalCambioOpen(false)}

@@ -66,6 +66,7 @@ interface FactorHvac { id: string; label: string; factor: number; }
 
 interface MetradosState {
   metrados: MetradoRecord[];
+  totalCount: number;
   proyectos: Proyecto[];
   especialidades: Especialidad[];
   usuarios: Usuario[];
@@ -89,6 +90,7 @@ interface MetradosState {
 
 export const useMetradosStore = create<MetradosState>((set, get) => ({
   metrados: [],
+  totalCount: 0,
   proyectos: [],
   especialidades: [],
   usuarios: [],
@@ -176,6 +178,8 @@ export const useMetradosStore = create<MetradosState>((set, get) => ({
       console.error("Error fetching metrados count:", countError);
       return;
     }
+
+    set({ totalCount: count || 0 });
 
     if (!count || count === 0) {
       set({ metrados: [], isLoading: false });

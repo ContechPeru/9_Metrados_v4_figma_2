@@ -222,13 +222,17 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
   });
 }
 
-// ─── Cargar imagen desde assets ───────────────────────────────────────────────
+let cachedLogoBuffer: ArrayBuffer | null = null;
+
+// ─── Cargar imagen desde assets (Caché en memoria) ───────────────────────────
 async function loadLogoBuffer(): Promise<ArrayBuffer | null> {
+  if (cachedLogoBuffer) return cachedLogoBuffer;
   try {
     const logoUrl = new URL('/src/assets/logo-gobierno-cusco.png', import.meta.url).href;
     const res = await fetch(logoUrl);
     if (!res.ok) return null;
-    return await res.arrayBuffer();
+    cachedLogoBuffer = await res.arrayBuffer();
+    return cachedLogoBuffer;
   } catch {
     return null;
   }
