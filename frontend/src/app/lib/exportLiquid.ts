@@ -76,7 +76,7 @@ const COLS: ColDef[] = [
   { key: 'cuadrilla',    label: 'CUADRILLA',    width: 15, h: 'left' },
   { key: 'autor',        label: 'AUTOR',        width: 15, h: 'left' },
   { key: 'grado',        label: 'GRADO',        width: 10, h: 'center' },
-  { key: 'observacion',  label: 'OBSERVACIÓN',  width: 25, h: 'left' },
+  { key: 'observacion',  label: 'OBSERVACIÓN',  width: 35, h: 'left' },
 ];
 
 const NCOLS = COLS.length;
