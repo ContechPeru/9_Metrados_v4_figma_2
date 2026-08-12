@@ -71,12 +71,12 @@ const COLS: ColDef[] = [
   { key: 'bloque',       label: 'BLOQUE',      width: 12, h: 'center' },
   { key: 'nivel',        label: 'NIVEL',       width: 10, h: 'center' },
   { key: 'sistema',      label: 'SISTEMA/AMBIENTE', width: 20, h: 'left' },
-  { key: 'observacion',  label: 'OBSERVACIÓN',  width: 15, h: 'left' },
   { key: 'modificaciones',label: 'MODIFICACIONES', width: 12, h: 'center' },
   { key: 'fecha',        label: 'FECHA',        width: 12, h: 'center' },
   { key: 'cuadrilla',    label: 'CUADRILLA',    width: 15, h: 'left' },
   { key: 'autor',        label: 'AUTOR',        width: 15, h: 'left' },
   { key: 'grado',        label: 'GRADO',        width: 10, h: 'center' },
+  { key: 'observacion',  label: 'OBSERVACIÓN',  width: 25, h: 'left' },
 ];
 
 const NCOLS = COLS.length;
@@ -228,27 +228,28 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
     cell.alignment = aln('left');
     for (let c = 1; c <= NCOLS; c++) {
       const cell = ws.getCell(r, c);
+      const colKey = COLS[c-1].key;
       
       cell.fill = fill(C.PARTIDA_BG);
       cell.border = brd();
 
-      if (c === 1) {
+      if (colKey === 'item') {
         cell.value = partida.item;
         cell.font = fnt(C.PARTIDA_FG, 9, true);
-      } else if (c === 2) {
+      } else if (colKey === 'descripcion') {
         cell.value = partida.descripcion;
         cell.font = fnt(C.PARTIDA_FG, 9, true, false);
         cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
-      } else if (c === 3) {
+      } else if (colKey === 'unidad') {
         cell.value = partida.unidad;
         cell.font = fnt(C.PARTIDA_FG, 9, true);
         cell.alignment = aln('center');
-      } else if (c === 14) {
+      } else if (colKey === 'total') {
         cell.value = partida.total;
         cell.font = fnt(C.PARTIDA_FG, 9, true);
         cell.alignment = aln('right');
         cell.numFmt = '#,##0.00';
-      } else if (c === 20) {
+      } else if (colKey === 'modificaciones') {
         cell.value = partida.modificacion || '';
         cell.font = fnt(C.PARTIDA_FG, 9, true);
         cell.alignment = aln('center');
@@ -266,6 +267,7 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
 
       for (let c = 1; c <= NCOLS; c++) {
         const cell = ws.getCell(r, c);
+        const colKey = COLS[c-1].key;
         cell.border = brdDotted(); // Borde punteado para los detalles
         cell.font = fnt(C.DETAIL_FG, 8);
         
@@ -274,50 +276,51 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
           cell.fill = fill(COLS[c-1].bg!);
         }
 
-        if (c === 2) {
+        if (colKey === 'descripcion') {
           // DESCRIPCION (Sustento)
           cell.value = sustentoStr;
           cell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
           cell.font = fnt(C.DETAIL_FG, 8, false, true); // Italic
-        } else if (c === 4 && m.nro_repeticiones) {
+        } else if (colKey === 'veces' && m.nro_repeticiones) {
           cell.value = m.nro_repeticiones; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 5 && m.cantidad_elementos) {
+        } else if (colKey === 'cantidad' && m.cantidad_elementos) {
           cell.value = m.cantidad_elementos; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 6 && m.medida_largo_area) {
+        } else if (colKey === 'largo' && m.medida_largo_area) {
           cell.value = m.medida_largo_area; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 7 && m.medida_ancho_empalme) {
+        } else if (colKey === 'ancho' && m.medida_ancho_empalme) {
           cell.value = m.medida_ancho_empalme; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 8 && m.medida_alto_gancho) {
+        } else if (colKey === 'altura' && m.medida_alto_gancho) {
           cell.value = m.medida_alto_gancho; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 11 && m.hvac_factor) {
+        } else if (colKey === 'factor' && m.hvac_factor) {
           cell.value = m.hvac_factor; cell.alignment = aln('center'); cell.numFmt = '#,##0.00';
-        } else if (c === 12 && m.acero_diametro) {
+        } else if (colKey === 'acero' && m.acero_diametro) {
           cell.value = m.acero_diametro; cell.alignment = aln('center');
-        } else if (c === 13) {
+        } else if (colKey === 'subtotal') {
           // SUB TOTAL
           cell.value = m.resultado_total; cell.alignment = aln('right'); cell.numFmt = '#,##0.00';
-        } else if (c === 15) {
+        } else if (colKey === 'frente') {
           cell.value = m.frente_trabajo; cell.alignment = aln('center');
-        } else if (c === 16) {
+        } else if (colKey === 'bloque') {
           cell.value = m.bloque_sector; cell.alignment = aln('center');
-        } else if (c === 17) {
+        } else if (colKey === 'nivel') {
           cell.value = m.nivel_piso; cell.alignment = aln('center');
-        } else if (c === 18) {
+        } else if (colKey === 'sistema') {
           cell.value = m.elemento_desc; cell.alignment = aln('left', true);
-        } else if (c === 19) {
+        } else if (colKey === 'observacion') {
           cell.value = m.observacion || ''; cell.alignment = aln('left', true);
-        } else if (c === 20) {
+        } else if (colKey === 'modificaciones') {
           cell.value = m._modificacion || ''; cell.alignment = aln('center');
-        } else if (c === 21) {
+        } else if (colKey === 'fecha') {
           cell.value = m.fecha_ejecucion; cell.alignment = aln('center');
-        } else if (c === 22) {
+        } else if (colKey === 'cuadrilla') {
           cell.value = m.cuadrilla; cell.alignment = aln('left');
-        } else if (c === 23) {
+        } else if (colKey === 'autor') {
           cell.value = getInitials(m.firma_ingeniero); cell.alignment = aln('center');
-        } else if (c === 24) {
+        } else if (colKey === 'grado') {
           cell.value = m.grado; cell.alignment = aln('center');
         } else {
           // Otras celdas quedan vacías pero con borde
+
           cell.value = '';
         }
       }
