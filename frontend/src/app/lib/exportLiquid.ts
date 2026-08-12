@@ -212,20 +212,6 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
   for (const partida of partidasList) {
     // 4a. Fila de Partida
     ws.getRow(r).height = 18;
-    
-    // A: ITEM
-    let cell = ws.getCell(r, 1);
-    cell.value = partida.item;
-    cell.font = fnt(C.PARTIDA_FG, 9, true);
-    cell.border = brd();
-    cell.alignment = aln('left');
-
-    // B: DESCRIPCION
-    cell = ws.getCell(r, 2);
-    cell.value = partida.descripcion;
-    cell.font = fnt(C.PARTIDA_FG, 9, true);
-    cell.border = brd();
-    cell.alignment = aln('left');
     for (let c = 1; c <= NCOLS; c++) {
       const cell = ws.getCell(r, c);
       const colKey = COLS[c-1].key;
@@ -335,7 +321,7 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
        if (COLS[c-1].bg) cell.fill = fill(COLS[c-1].bg!);
     }
     // Cerrar el borde inferior del bloque separador
-    for (let c = 1; c <= 23; c++) {
+    for (let c = 1; c <= NCOLS; c++) {
         ws.getCell(r, c).border = { bottom: { style: 'thin', color: { argb: C.BORDER_CLR } }, left: { style: 'thin', color: { argb: C.BORDER_CLR } }, right: { style: 'thin', color: { argb: C.BORDER_CLR } } };
     }
     r++;
