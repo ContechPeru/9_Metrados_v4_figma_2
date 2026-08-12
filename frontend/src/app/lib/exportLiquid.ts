@@ -304,9 +304,9 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
           cell.value = m.bloque_sector; cell.alignment = aln('center');
         } else if (colKey === 'nivel') {
           cell.value = m.nivel_piso; cell.alignment = aln('center');
-        } else if (c === 18) {
+        } else if (colKey === 'sistema') {
           cell.value = m.ambiente || m.elemento_desc || ''; cell.alignment = aln('left', true);
-        } else if (c === 19) {
+        } else if (colKey === 'observacion') {
           cell.value = m.observacion || ''; cell.alignment = aln('left', true);
         } else if (colKey === 'modificaciones') {
           cell.value = m._modificacion || ''; cell.alignment = aln('center');
