@@ -744,11 +744,27 @@ export function MetradosForm() {
           <div className="bg-gray-800 rounded text-white p-2 flex justify-between items-center mt-2 shadow-inner">
             <div className="flex flex-col">
               <span className="text-[9px] text-gray-400 uppercase">Parcial Exacto</span>
-              <span className="font-mono text-lg">{parcial.toFixed(3)}</span>
+              {strategy === formulaRegistry['HVAC'] ? (
+                <input type="number" 
+                       value={values.overrideParcial !== undefined ? values.overrideParcial : parcial} 
+                       onChange={e => updateValue('overrideParcial', parseFloat(e.target.value) || 0)} 
+                       onFocus={(e: any) => e.target.select()}
+                       className="w-24 bg-gray-700 text-white font-mono text-lg border border-gray-600 rounded px-1 outline-none focus:border-blue-400" />
+              ) : (
+                <span className="font-mono text-lg">{parcial.toFixed(3)}</span>
+              )}
             </div>
-            <div className="text-right flex flex-col">
+            <div className="text-right flex flex-col items-end">
               <span className="text-[9px] text-green-400 font-bold uppercase">Total Integrado</span>
-              <span className="font-mono text-xl font-bold text-green-400">{total.toFixed(3)}</span>
+              {strategy === formulaRegistry['HVAC'] ? (
+                <input type="number" 
+                       value={values.overrideTotal !== undefined ? values.overrideTotal : total} 
+                       onChange={e => updateValue('overrideTotal', parseFloat(e.target.value) || 0)} 
+                       onFocus={(e: any) => e.target.select()}
+                       className="w-24 bg-gray-700 text-green-400 font-mono text-xl font-bold border border-gray-600 rounded px-1 text-right outline-none focus:border-green-400" />
+              ) : (
+                <span className="font-mono text-xl font-bold text-green-400">{total.toFixed(3)}</span>
+              )}
             </div>
           </div>
         </div>

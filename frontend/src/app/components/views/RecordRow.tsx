@@ -19,6 +19,8 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
     ancho: record.medida_ancho_empalme || 0,
     alt: record.medida_alto_gancho || 0,
     veces: record.nro_repeticiones || 1,
+    parcial: record.resultado_parcial || 0,
+    total: record.resultado_total || 0,
   });
 
   const handleUpdate = async () => {
@@ -29,9 +31,23 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
     const numAncho = editValues.ancho;
     const numAlt = editValues.alt;
     
-    const hasDims = numLong !== 0 || numAncho !== 0 || numAlt !== 0;
-    const parcial = hasDims ? numCant * (numLong || 1) * (numAncho || 1) * (numAlt || 1) : numCant;
-    const total = parcial * editValues.veces;
+    let parcial = record.resultado_parcial;
+    let total = record.resultado_total;
+    
+    if (record.tipo_calculo === 'HVAC') {
+      parcial = editValues.parcial;
+      total = editValues.total;
+    } else if (record.tipo_calculo === 'ACERO') {
+       // Inline edit no soporta cálculo automático del acero por falta de factor, 
+       // mantenemos el parcial existente si no cambian dimensiones, o forzamos que lo editen desde el form principal.
+       // Por ahora evitamos sobreescribir el parcial del acero erróneamente.
+       parcial = record.resultado_parcial;
+       total = parcial * editValues.veces;
+    } else {
+      const hasDims = numLong !== 0 || numAncho !== 0 || numAlt !== 0;
+      parcial = hasDims ? numCant * (numLong || 1) * (numAncho || 1) * (numAlt || 1) : numCant;
+      total = parcial * editValues.veces;
+    }
 
     const updates = {
       cantidad_elementos: numCant,
@@ -83,15 +99,25 @@ export function RecordRow({ record }: { record: MetradoRecord }) {
         <td className="px-2 py-2">
           <input type="number" value={editValues.alt} onChange={e => setEditValues(p => ({...p, alt: parseFloat(e.target.value)||0}))} className="w-12 text-center border border-gray-300 rounded text-xs p-1" />
         </td>
-        
-        <td className="px-3 py-2 text-xs text-center bg-gray-100 font-bold">CALC</td>
+        {record.tipo_calculo === 'HVAC' ? (
+          <td className="px-1 py-1 bg-blue-50">
+            <input type="number" value={editValues.parcial} onChange={e => setEditValues(p => ({...p, parcial: parseFloat(e.target.value)||0}))} className="w-16 text-center border border-blue-400 rounded text-xs p-1 font-bold text-blue-900" />
+          </td>
+        ) : (
+          <td className="px-3 py-2 text-xs text-center bg-gray-100 font-bold">CALC</td>
+        )}
         
         <td className="px-2 py-2">
           <input type="number" value={editValues.veces} onChange={e => setEditValues(p => ({...p, veces: parseFloat(e.target.value)||0}))} className="w-10 text-center border border-gray-300 rounded text-xs p-1" />
         </td>
         
-        <td className="px-3 py-2 text-xs font-bold text-center bg-yellow-100">CALC</td>
-        
+        {record.tipo_calculo === 'HVAC' ? (
+          <td className="px-1 py-1 bg-green-50">
+            <input type="number" value={editValues.total} onChange={e => setEditValues(p => ({...p, total: parseFloat(e.target.value)||0}))} className="w-16 text-center border border-green-400 rounded text-xs p-1 font-bold text-green-900" />
+          </td>
+        ) : (
+          <td className="px-3 py-2 text-xs font-bold text-center bg-yellow-100">CALC</td>
+        )}
         <td className="px-3 py-2 text-xs flex items-center justify-end gap-2">
           <button onClick={handleUpdate} disabled={isSubmitting} className="text-green-600 hover:bg-green-100 p-1 rounded disabled:opacity-50"><Save size={14} /></button>
           <button onClick={() => setIsEditing(false)} disabled={isSubmitting} className="text-gray-500 hover:bg-gray-200 p-1 rounded disabled:opacity-50"><X size={14} /></button>
