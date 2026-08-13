@@ -10,6 +10,7 @@ import { PersonalMultiSelect } from '../PersonalMultiSelect';
 import { supabase } from '../../lib/supabase';
 import { ModalNuevaPartida } from './ModalNuevaPartida';
 import { toast } from 'sonner';
+import { formulaRegistry } from '../../../utils/formulas/strategies';
 
 // En lugar de diccionario matriz quemado en código,
 // extraemos las opciones únicas directamente de los metrados de la base de datos.
