@@ -79,7 +79,9 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
         planoSist: editingMetrado.plano_sist ?? '',
         planoNum: editingMetrado.plano_num ?? '',
         planoEsp: editingMetrado.plano_esp ?? '',
-        observacion: editingMetrado.observacion ?? ''
+        observacion: editingMetrado.observacion ?? '',
+        overrideParcial: editingMetrado.resultado_parcial,
+        overrideTotal: editingMetrado.resultado_total
       }));
       
       const partidaDB = partidas.find(p => p.id === editingMetrado.partida_id);
@@ -136,8 +138,19 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
     return baseExtra;
   }, [strategy, values.hvacItemId, factoresHvac, selectedPartida, isLiquidaciones]);
 
-  const parcial = useMemo(() => strategy.calcularParcial(values, extraData), [strategy, values, extraData]);
-  const total = useMemo(() => parcial * (values.veces || 1), [parcial, values.veces]);
+  const parcial = useMemo(() => {
+    if (strategy === formulaRegistry['HVAC'] && values.overrideParcial !== undefined) {
+      return values.overrideParcial;
+    }
+    return strategy.calcularParcial(values, extraData);
+  }, [strategy, values, extraData]);
+
+  const total = useMemo(() => {
+    if (strategy === formulaRegistry['HVAC'] && values.overrideTotal !== undefined) {
+      return values.overrideTotal;
+    }
+    return parcial * (values.veces || 1);
+  }, [parcial, values.veces, strategy, values.overrideTotal]);
 
   const updateValue = useCallback((field: keyof MetradoFormValues, val: any) => {
     setValues(prev => {
@@ -166,7 +179,7 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
   }, []);
 
   const limpiarCamposNum = useCallback(() => {
-    setValues(prev => ({ ...prev, cant: 1, long: 0, ancho: 0, alt: 0, observacion: '' }));
+    setValues(prev => ({ ...prev, cant: 1, long: 0, ancho: 0, alt: 0, observacion: '', overrideParcial: undefined, overrideTotal: undefined }));
   }, []);
 
   const procesarRegistro = async () => {

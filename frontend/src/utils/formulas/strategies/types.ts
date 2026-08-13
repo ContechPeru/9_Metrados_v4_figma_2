@@ -18,6 +18,8 @@ export type MetradoFormValues = {
   veces: number;
   diametroAcero?: string;
   hvacItemId?: string; // ID del factor seleccionado en HVAC
+  overrideParcial?: number; // Override manual para HVAC
+  overrideTotal?: number; // Override manual para HVAC
   sinPlano?: boolean;
   motivoSinPlano?: string;
   obsSinPlano?: string;
