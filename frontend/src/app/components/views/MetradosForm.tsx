@@ -672,6 +672,23 @@ export function MetradosForm() {
                 </div>
               ) : (
                 <>
+                  <div className="flex items-center justify-between mb-0.5">
+                    <label className="block text-[10px] text-gray-400 uppercase tracking-widest font-bold">Detalle / Nro.</label>
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const { metrados } = useMetradosStore.getState();
+                        const lastWithDet = [...metrados].reverse().find(m => m.detalle_desc && m.detalle_desc.trim() !== '');
+                        if (lastWithDet) {
+                          updateValue('detalle', lastWithDet.detalle_desc);
+                        }
+                      }}
+                      className="text-[9px] font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 transition-colors"
+                      title="Copiar detalle del último metrado registrado en la base de datos"
+                    >
+                      + Último Det.
+                    </button>
+                  </div>
                   <DebouncedInput 
                     type="text" 
                     value={values.detalle} 
@@ -903,11 +920,18 @@ export function MetradosForm() {
           <button 
             type="button"
             onClick={() => {
-              const lastObs = localStorage.getItem('last_observacion');
-              if (lastObs) updateValue('observacion', lastObs);
+              // Buscar el último metrado registrado que tenga una observación (ignoramos los que solo tienen detalle)
+              const lastWithObs = [...metrados].reverse().find(m => m.observacion && m.observacion.trim() !== '');
+              if (lastWithObs) {
+                updateValue('observacion', lastWithObs.observacion);
+              } else {
+                // Fallback a localStorage por si es el primer metrado de la sesión
+                const lastObs = localStorage.getItem('last_observacion');
+                if (lastObs) updateValue('observacion', lastObs);
+              }
             }}
             className="text-[9px] font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 transition-colors"
-            title="Copiar observación del último metrado registrado"
+            title="Copiar observación del último metrado registrado en la base de datos"
           >
             + Última Obs.
           </button>
