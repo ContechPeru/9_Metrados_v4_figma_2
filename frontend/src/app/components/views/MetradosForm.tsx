@@ -46,7 +46,7 @@ const CONFIG_ESPECIALIDAD: Record<string, { label: string | null }> = {
 };
 
 const FRENTES_BLOQUES: Record<string, string[]> = {
-  'F1': ['B1', 'B2', 'B3', 'B5', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'EXT2', 'EXT3', 'EXT6', 'EXT7', 'EXT8', 'EXT9', 'ZZ'],
+  'F1': ['B1', 'B2', 'B3', 'B5', 'B7', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'EXT1', 'EXT2', 'EXT3', 'EXT6', 'EXT7', 'EXT8', 'EXT9', 'ZZ'],
   'F2': ['B4', 'B6']
 };
 
