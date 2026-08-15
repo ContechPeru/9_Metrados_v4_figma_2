@@ -36,6 +36,7 @@ export interface MetradoRecord {
   obs_motivo?: string | null;
   obs_detalle?: string | null;
   observacion?: string | null;
+  ubicacion?: string | null;
   is_liberado?: boolean;
 }
 

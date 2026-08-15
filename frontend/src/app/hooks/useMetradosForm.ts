@@ -45,7 +45,8 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
     planoSist: '',
     planoTipo: '',
     planoNum: '',
-    observacion: ''
+    observacion: '',
+    ubicacion: ''
   });
 
   const [selectedPartida, setSelectedPartida] = useState<any>(null);
@@ -80,6 +81,7 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
         planoNum: editingMetrado.plano_num ?? '',
         planoEsp: editingMetrado.plano_esp ?? '',
         observacion: editingMetrado.observacion ?? '',
+        ubicacion: editingMetrado.ubicacion ?? '',
         overrideParcial: editingMetrado.resultado_parcial,
         overrideTotal: editingMetrado.resultado_total
       }));
@@ -241,7 +243,8 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
       obs_motivo: values.motivoSinPlano || null,
       obs_detalle: values.obsSinPlano || null,
       plano_esp: values.planoEsp || null,
-      observacion: values.observacion || null
+      observacion: values.observacion || null,
+      ubicacion: values.ubicacion || null
     };
 
     let result;

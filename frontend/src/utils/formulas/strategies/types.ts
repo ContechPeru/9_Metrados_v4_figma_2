@@ -32,6 +32,7 @@ export type MetradoFormValues = {
   planoTipo?: string;
   planoNum?: string;
   observacion?: string;
+  ubicacion?: string;
 };
 export interface FormulaStrategy {
   isFieldLocked(field: 'long' | 'ancho' | 'alt', extraData?: any): boolean;

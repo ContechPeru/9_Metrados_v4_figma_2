@@ -77,6 +77,7 @@ const COLS: ColDef[] = [
   { key: 'autor',        label: 'AUTOR',        width: 15, h: 'left' },
   { key: 'grado',        label: 'GRADO',        width: 10, h: 'center' },
   { key: 'observacion',  label: 'OBSERVACIÓN',  width: 35, h: 'left' },
+  { key: 'ubicacion',    label: 'UBICACIÓN',    width: 12, h: 'center' },
 ];
 
 const NCOLS = COLS.length;
@@ -112,7 +113,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
     .from('registro_metrados')
     .select(`
       grado, fecha_ejecucion, especialidad, frente_trabajo, ambiente, bloque_sector,
-      nivel_piso, cuadrilla, elemento_desc, detalle_desc, observacion,
+      nivel_piso, cuadrilla, elemento_desc, detalle_desc, observacion, ubicacion,
       snapshot_codigo, snapshot_descripcion,
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho, nro_repeticiones,
       acero_diametro, hvac_factor, resultado_total, unidad, firma_ingeniero,
@@ -304,6 +305,8 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
           cell.value = getInitials(m.firma_ingeniero); cell.alignment = aln('center');
         } else if (colKey === 'grado') {
           cell.value = m.grado; cell.alignment = aln('center');
+        } else if (colKey === 'ubicacion') {
+          cell.value = m.ubicacion || ''; cell.alignment = aln('center');
         } else {
           // Otras celdas quedan vacías pero con borde
 

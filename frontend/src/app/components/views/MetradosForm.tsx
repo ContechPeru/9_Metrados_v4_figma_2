@@ -688,6 +688,25 @@ export function MetradosForm() {
           </div>
         </div>
 
+          {/* UBI: Ubicación */}
+          <div className="flex items-center gap-2 mt-1">
+            <label className="text-[10px] text-gray-500 font-semibold whitespace-nowrap">UBI:</label>
+            <select
+              value={values.ubicacion || ''}
+              onChange={e => updateValue('ubicacion', e.target.value)}
+              className="text-xs p-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-white min-w-[80px]"
+            >
+              <option value="">---</option>
+              <option value="PP">PP</option>
+              <option value="PN4">PN4</option>
+              <option value="MM4">MM4</option>
+              <option value="PN5">PN5</option>
+              <option value="MM5">MM5</option>
+              <option value="PN6">PN6</option>
+              <option value="MM6">MM6</option>
+            </select>
+          </div>
+
         {/* TARJETA 3: Cuánto (Matemática) */}
         <div className="bg-slate-100 border-2 border-dashed border-gray-300 rounded-lg p-3 space-y-3">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Fila 4: Matemática</h3>

@@ -101,6 +101,7 @@ const COLS: ColDef[] = [
   { key: '_obreros',             label: 'NOMBRES CUADRILLAS', width: 50, h: 'left'   },
   { key: 'firma_ingeniero',      label: 'AUTOR',              width: 22, h: 'left'   },
   { key: 'observacion',          label: 'OBSERVACIÓN',        width: 35, h: 'left'   },
+  { key: 'ubicacion',            label: 'UBICACIÓN',          width: 12, h: 'center' },
 ];
 
 const NCOLS = COLS.length;
@@ -178,7 +179,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
       snapshot_codigo, snapshot_descripcion,
       cantidad_elementos, medida_largo_area, medida_ancho_empalme, medida_alto_gancho,
       resultado_parcial, nro_repeticiones, acero_diametro, resultado_total,
-      unidad, plano_sist, plano_num, sin_plano, obs_motivo, obs_detalle, observacion, firma_ingeniero,
+      unidad, plano_sist, plano_num, sin_plano, obs_motivo, obs_detalle, observacion, ubicacion, firma_ingeniero,
       metrados_obreros ( personal_obrero ( nombres_completos, categoria_laboral ) ),
       catalogo_partidas ( modificacion, codigo_expediente, descripcion )
     `)
