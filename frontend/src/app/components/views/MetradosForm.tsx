@@ -579,7 +579,7 @@ export function MetradosForm() {
                 ))}
               </select>
             </div>
-                 {espConfig.label ? (
+              {espConfig.label ? (
                 <div>
                   <label className="text-[10px] text-gray-500 mb-1 block">{espConfig.label}</label>
                   <input 
@@ -597,7 +597,16 @@ export function MetradosForm() {
                   />
                 </div>
               ) : (
-                <div />
+                <div>
+                  <label className="text-[10px] text-gray-500 mb-1 block">UBI: OPCIONAL</label>
+                  <input 
+                    type="text"
+                    value={values.ambiente || ''} 
+                    onChange={e => updateValue('ambiente', e.target.value.toUpperCase())}
+                    placeholder="Escriba la ubicación..."
+                    className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-slate-100 uppercase" 
+                  />
+                </div>
               )}
           </div>
 
