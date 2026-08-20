@@ -812,7 +812,6 @@ export function MetradosForm() {
                   className="text-[10px] text-gray-500 hover:text-orange-600 border border-gray-200 hover:border-orange-300 rounded px-2 py-0.5 transition-colors flex items-center gap-1 font-medium bg-slate-100">
                   <span>⚠</span> Sin plano
                 </button>
->>>>>>> origin/main
               </div>
             </div>
           </div>
