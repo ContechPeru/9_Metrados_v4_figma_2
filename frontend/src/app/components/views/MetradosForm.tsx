@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Calculator, Check, Plus, Trash2, Building2, X, ChevronsUpDown, PlusCircle, Lock, Unlock } from 'lucide-react';
+import { Search, Check, Plus, Trash2, Building2, X, ChevronsUpDown, Lock, Unlock } from 'lucide-react';
 import { Command } from 'cmdk';
 import { useMetradosForm } from '../../hooks/useMetradosForm';
 import { usePersonalStore } from '../../store/usePersonalStore';
 import { useMetradosStore } from '../../store/useMetradosStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAppContext } from '../../context/AppContext';
-import { PersonalMultiSelect } from '../PersonalMultiSelect';
-import { supabase } from '../../lib/supabase';
 import { ModalNuevaPartida } from './ModalNuevaPartida';
 import { toast } from 'sonner';
 import { formulaRegistry } from '../../../utils/formulas/strategies';
@@ -97,8 +95,7 @@ export function MetradosForm() {
   } = useMetradosForm(editingMetrado, lockedEspecialidad);
 
   const { setRightPanelVisible } = useAppContext();
-  const { cuadrillasUnicas, fetchPersonal, obreros } = usePersonalStore();
-  const readOnly = isReadOnlyMetrados();
+  const { fetchPersonal, obreros } = usePersonalStore();
 
 
   useEffect(() => {
