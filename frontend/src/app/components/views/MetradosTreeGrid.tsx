@@ -233,7 +233,7 @@ const MetradoRow = React.memo(({
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             )}
           </div>
-          {canEditMetrado(m.fecha_ejecucion, m.autor_nombre) && (
+          {canEditMetrado(m.fecha_ejecucion, m.autor_nombre || m.firma_ingeniero || '') && (
             <>
               <button onClick={() => callbacksRef.current.onEdit(m)} className="p-2 -m-1 text-blue-600 hover:bg-blue-100 rounded transition-colors" title="Editar" aria-label="Editar">
                 <Edit2 size={14} />

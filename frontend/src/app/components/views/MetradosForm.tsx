@@ -692,7 +692,6 @@ export function MetradosForm() {
                         className="text-[9px] font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 transition-colors"
                         title="Copiar detalle del último metrado registrado en la base de datos"
                       >
-                        + Último Det.
                       </button>
                     </div>
                     <DebouncedInput
