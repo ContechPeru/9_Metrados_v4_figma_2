@@ -296,32 +296,82 @@ function UnifiedDateFilter({
 
   const isActive = isCustomDate || period !== 'todo';
 
+  const shiftDays = (days: number) => {
+    let s = dateRange.start;
+    let e = dateRange.end;
+    
+    // Si no hay filtro, asumimos hoy como punto de partida
+    if (!s && !e) {
+      const today = new Date();
+      s = today.toISOString().split('T')[0];
+      e = s;
+    }
+
+    const adjust = (dateStr: string) => {
+      if (!dateStr) return '';
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      date.setDate(date.getDate() + days);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    setDateRange({
+      start: adjust(s),
+      end: adjust(e)
+    });
+    setPeriod('todo');
+  };
+
   return (
-    <div ref={ref} className="relative flex-shrink-0">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 px-4 py-1.5 rounded-full whitespace-nowrap transition-all select-none border shadow-sm"
+    <div ref={ref} className="relative flex-shrink-0 flex items-center">
+      <div 
+        className="flex items-center rounded-full border shadow-sm overflow-hidden transition-all"
         style={{
           borderColor: isActive ? '#1A6BFF' : '#E5E9F0',
           backgroundColor: isActive ? '#1A6BFF' : open ? '#F8FAFC' : '#FFFFFF',
-          color: isActive ? '#FFFFFF' : '#334155',
-          fontFamily: 'IBM Plex Sans, sans-serif',
-          fontSize: '11px',
-          fontWeight: isActive ? 600 : 500,
         }}
       >
-        <Calendar size={13} style={{ color: isActive ? '#FFFFFF' : '#94A3B8' }} />
-        <span>{displayText}</span>
-        {isActive ? (
-          <X size={12} className="hover:scale-125 transition-transform cursor-pointer ml-1" onClick={(e) => { 
-            e.stopPropagation(); 
-            setDateRange({start: '', end: ''}); 
-            setPeriod('todo'); 
-          }} />
-        ) : (
-          <ChevronDown size={12} className={`transition-transform duration-200 ml-1 ${open ? 'rotate-180' : ''}`} style={{ opacity: 0.8 }} />
-        )}
-      </button>
+        <button 
+          onClick={(e) => { e.stopPropagation(); shiftDays(-1); }}
+          className="px-2 py-1.5 hover:bg-black/10 transition-colors h-full flex items-center justify-center"
+          style={{ color: isActive ? '#FFFFFF' : '#64748B' }}
+          title="Día anterior"
+        >
+          <ChevronLeft size={14} />
+        </button>
+
+        <button
+          onClick={() => setOpen(o => !o)}
+          className="flex items-center gap-2 px-2 py-1.5 whitespace-nowrap select-none"
+          style={{
+            color: isActive ? '#FFFFFF' : '#334155',
+            fontFamily: 'IBM Plex Sans, sans-serif',
+            fontSize: '11px',
+            fontWeight: isActive ? 600 : 500,
+          }}
+        >
+          <Calendar size={13} style={{ color: isActive ? '#FFFFFF' : '#94A3B8' }} />
+          <span>{displayText}</span>
+          {isActive ? (
+            <X size={12} className="hover:scale-125 transition-transform cursor-pointer ml-1" onClick={(e) => { 
+              e.stopPropagation(); 
+              setDateRange({start: '', end: ''}); 
+              setPeriod('todo'); 
+            }} />
+          ) : (
+            <ChevronDown size={12} className={`transition-transform duration-200 ml-1 ${open ? 'rotate-180' : ''}`} style={{ opacity: 0.8 }} />
+          )}
+        </button>
+
+        <button 
+          onClick={(e) => { e.stopPropagation(); shiftDays(1); }}
+          className="px-2 py-1.5 hover:bg-black/10 transition-colors h-full flex items-center justify-center"
+          style={{ color: isActive ? '#FFFFFF' : '#64748B' }}
+          title="Día siguiente"
+        >
+          <ChevronRight size={14} />
+        </button>
+      </div>
 
       {open && (
         <div

@@ -596,16 +596,17 @@ export function MetradosForm() {
                 </div>
               ) : (
                 <div>
-                  <label className="text-[10px] text-gray-400 mb-1 block">Ambiente</label>
+                  <label className="text-[10px] text-gray-500 mb-1 block">UBI: OPCIONAL</label>
                   <input 
                     type="text"
                     value={values.ambiente || ''} 
                     onChange={e => updateValue('ambiente', e.target.value.toUpperCase())}
-                    placeholder="Opcional..."
-                    className="w-full text-xs p-1.5 border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-slate-100 uppercase" 
+                    placeholder="Escriba la ubicación..."
+                    className="w-full text-xs p-1.5 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none bg-slate-100 uppercase" 
                   />
                 </div>
               )}
+            </div>
             </div>
 
 
@@ -708,6 +709,110 @@ export function MetradosForm() {
                     />
                   </>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* TARJETA 3: Cuánto (Matemática) */}
+        <div className="bg-slate-100 border-2 border-dashed border-gray-300 rounded-lg p-3 space-y-3">
+          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Fila 4: Matemática</h3>
+          
+          {isAcero && (
+            <div className="bg-orange-50 border border-orange-200 rounded p-2 mb-2">
+              <label className="text-[10px] text-orange-700 font-bold mb-1 block">Diámetro Acero</label>
+              <select value={values.diametroAcero} onChange={e => updateValue('diametroAcero', e.target.value)} className="w-full text-xs p-1.5 border border-orange-300 rounded bg-slate-100 text-orange-900 font-bold">
+                <option value="">Seleccionar Ø...</option>
+                <option value="1/4">1/4"</option>
+                <option value="3/8">3/8"</option>
+                <option value="1/2">1/2"</option>
+                <option value="5/8">5/8"</option>
+                <option value="3/4">3/4"</option>
+                <option value="1">1"</option>
+              </select>
+            </div>
+          )}
+
+          <div className={`grid gap-1.5 ${isAcero ? 'grid-cols-5' : 'grid-cols-5'}`}>
+            <div>
+              <label className="block text-center text-[9px] text-gray-500 font-bold mb-0.5">CANT.</label>
+              <input id="inp-cant" type="number" onKeyDown={e => handleKeyDown(e, 'inp-long')} value={values.cant} onChange={e => updateValue('cant', parseFloat(e.target.value) || 0)} onFocus={(e: any) => e.target.select()} className="w-full text-center text-xs p-1 border border-gray-300 rounded font-mono" />
+            </div>
+            <div>
+              <label className="block text-center text-[9px] text-gray-500 font-bold mb-0.5 truncate">{strategy.getFieldLabel('long')}</label>
+              <input id="inp-long" type="number" onKeyDown={e => handleKeyDown(e, 'inp-ancho')} value={values.long} onChange={e => updateValue('long', parseFloat(e.target.value) || 0)} onFocus={(e: any) => e.target.select()} disabled={strategy.isFieldLocked('long', extraData)} className={`w-full text-center text-xs p-1 border border-gray-300 rounded font-mono ${strategy.isFieldLocked('long', extraData) ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`} />
+            </div>
+            <div>
+              <label className="block text-center text-[9px] text-gray-500 font-bold mb-0.5 truncate">{strategy.getFieldLabel('ancho')}</label>
+              <input id="inp-ancho" type="number" onKeyDown={e => handleKeyDown(e, 'inp-alt')} value={values.ancho} onChange={e => updateValue('ancho', parseFloat(e.target.value) || 0)} onFocus={(e: any) => e.target.select()} disabled={strategy.isFieldLocked('ancho', extraData)} className={`w-full text-center text-xs p-1 border border-gray-300 rounded font-mono ${strategy.isFieldLocked('ancho', extraData) ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`} />
+            </div>
+            <div>
+              <label className="block text-center text-[9px] text-gray-500 font-bold mb-0.5 truncate">{strategy.getFieldLabel('alt')}</label>
+              <input id="inp-alt" type="number" onKeyDown={e => handleKeyDown(e, 'inp-veces')} value={values.alt} onChange={e => updateValue('alt', parseFloat(e.target.value) || 0)} onFocus={(e: any) => e.target.select()} disabled={strategy.isFieldLocked('alt', extraData)} className={`w-full text-center text-xs p-1 border border-gray-300 rounded font-mono ${strategy.isFieldLocked('alt', extraData) ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`} />
+            </div>
+            <div>
+              <label className="block text-center text-[9px] text-gray-500 font-bold mb-0.5 text-blue-600">VECES</label>
+              <input id="inp-veces" type="number" onFocus={(e: any) => e.target.select()} onKeyDown={async e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (!isSubmitting && selectedPartida && total > 0) {
+                    try {
+                      await procesarRegistro();
+                      toast.success("Metrado registrado con éxito");
+                    } catch (err: any) {
+                      toast.error(err.message);
+                    }
+                  }
+                }
+              }} value={values.veces} onChange={e => updateValue('veces', parseFloat(e.target.value) || 0)} className="w-full text-center text-xs p-1 border border-blue-400 rounded font-mono bg-blue-50 font-bold text-blue-900" />
+            </div>
+          </div>
+
+          <div className="bg-gray-800 rounded text-white p-2 flex justify-between items-center mt-2 shadow-inner">
+            <div className="flex flex-col">
+              <span className="text-[9px] text-gray-400 uppercase">Parcial Exacto</span>
+              {strategy === formulaRegistry['HVAC'] ? (
+                <input type="number" 
+                       value={values.overrideParcial !== undefined ? values.overrideParcial : parcial} 
+                       onChange={e => updateValue('overrideParcial', parseFloat(e.target.value) || 0)} 
+                       onFocus={(e: any) => e.target.select()}
+                       className="w-24 bg-gray-700 text-white font-mono text-lg border border-gray-600 rounded px-1 outline-none focus:border-blue-400" />
+              ) : (
+                <span className="font-mono text-lg">{parcial.toFixed(3)}</span>
+              )}
+            </div>
+            <div className="text-right flex flex-col items-end">
+              <span className="text-[9px] text-green-400 font-bold uppercase">Total Integrado</span>
+              {strategy === formulaRegistry['HVAC'] ? (
+                <input type="number" 
+                       value={values.overrideTotal !== undefined ? values.overrideTotal : total} 
+                       onChange={e => updateValue('overrideTotal', parseFloat(e.target.value) || 0)} 
+                       onFocus={(e: any) => e.target.select()}
+                       className="w-24 bg-gray-700 text-green-400 font-mono text-xl font-bold border border-gray-600 rounded px-1 text-right outline-none focus:border-green-400" />
+              ) : (
+                <span className="font-mono text-xl font-bold text-green-400">{total.toFixed(3)}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* TARJETA 4: Código de Plano */}
+        {!values.sinPlano ? (
+          <div className="bg-slate-100 border border-gray-200 rounded-lg p-3 space-y-3">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Código de Plano</h3>
+              <div className="flex items-center gap-1.5">
+                <button type="button" onClick={usarUltimoPlano}
+                  className="text-[10px] text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded px-2 py-0.5 transition-colors flex items-center gap-1 font-medium"
+                  title="Cargar el último plano registrado en tu caché local">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Anterior
+                </button>
+                <button type="button" onClick={() => updateValue('sinPlano', true)}
+                  className="text-[10px] text-gray-500 hover:text-orange-600 border border-gray-200 hover:border-orange-300 rounded px-2 py-0.5 transition-colors flex items-center gap-1 font-medium bg-slate-100">
+                  <span>⚠</span> Sin plano
+                </button>
+>>>>>>> origin/main
               </div>
             </div>
           </div>
@@ -815,7 +920,6 @@ export function MetradosForm() {
               </div>
             </div>
           </div>
-
           {/* TARJETA 4: Código de Plano */}
           {!values.sinPlano ? (
             <div className="bg-slate-100 border border-gray-200 rounded-lg p-3 space-y-3">
