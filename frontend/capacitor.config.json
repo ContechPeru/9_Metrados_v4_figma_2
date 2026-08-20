@@ -1,0 +1,17 @@
+{
+  "appId": "pe.contech.metrados",
+  "appName": "Metrados Belempampa",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystorePassword": "",
+      "keystoreAlias": "",
+      "keystoreAliasPassword": "",
+      "releaseType": "AAB"
+    }
+  }
+}

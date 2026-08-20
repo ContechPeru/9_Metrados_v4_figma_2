@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import ExcelJS from 'exceljs';
-import * as fs from 'fs';
 
 const supabaseUrl = 'https://ltmxbfdlnaelharzkuyd.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0bXhiZmRsbmFlbGhhcnprdXlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNTQ4MzAsImV4cCI6MjA5OTYzMDgzMH0.D32wHC7DK4aSPtu-c-9zpSyBTIQvPezXPH0okPh13wQ';
@@ -8,7 +7,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function main() {
   console.log('Fetching data...');
-  let allData = [];
+  let allData: any[] = [];
   let page = 0;
   let hasMore = true;
   
@@ -44,7 +43,7 @@ async function main() {
   
   const filtered = allData.filter(r => {
     if (!r.fecha_ejecucion) return false;
-    const [year, monthStr, day] = r.fecha_ejecucion.split('-');
+    const [, monthStr] = r.fecha_ejecucion.split('-');
     const month = parseInt(monthStr, 10);
     return month >= 5 && month <= 11;
   });

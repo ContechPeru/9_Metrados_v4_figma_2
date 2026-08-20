@@ -23,35 +23,53 @@ const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function checkAcero() {
-  const { data, error } = await supabase
-    .from('registro_metrados')
-    .select(`
-      id,
-      acero_diametro,
-      catalogo_partidas (
-        id,
-        tipo_calculo,
-        codigo_expediente
-      )
-    `)
-    .not('acero_diametro', 'is', null);
+  let allRows: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
 
-  if (error) {
-    console.error('Error fetching data:', error);
-    return;
+  console.log('Buscando registros con acero_diametro...');
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('registro_metrados')
+      .select(`
+        id,
+        acero_diametro,
+        catalogo_partidas (
+          id,
+          tipo_calculo,
+          codigo_expediente,
+          descripcion
+        )
+      `)
+      .not('acero_diametro', 'is', null)
+      .range(from, from + pageSize - 1);
+
+    if (error) {
+      console.error('Error fetching data:', error);
+      return;
+    }
+
+    if (!data || data.length === 0) break;
+    allRows.push(...data);
+
+    if (data.length < pageSize) break;
+    from += pageSize;
   }
 
-  const affected = data.filter((row: any) => {
+  const affected = allRows.filter((row: any) => {
     const tipo = row.catalogo_partidas?.tipo_calculo;
-    // Si no es Acero, entonces está mal que tenga acero_diametro
-    return tipo !== 'Acero';
+    // Si no es ACERO, entonces no debería tener acero_diametro
+    return !tipo || tipo.toUpperCase() !== 'ACERO';
   });
 
-  console.log(`Total metrados con acero_diametro: ${data.length}`);
-  console.log(`Total metrados con acero_diametro pero tipo_calculo NO es Acero: ${affected.length}`);
+  console.log(`Total metrados con acero_diametro: ${allRows.length}`);
+  console.log(`Total metrados con acero_diametro pero tipo_calculo NO es ACERO: ${affected.length}`);
   
   if (affected.length > 0) {
-    console.log('Ejemplo de afectados:', affected.slice(0, 5));
+    console.log('Ejemplo de afectados (primeros 5):', JSON.stringify(affected.slice(0, 5), null, 2));
+  } else {
+    console.log('¡Todo en orden! No hay registros con acero_diametro en partidas que no sean de tipo ACERO.');
   }
 }
 

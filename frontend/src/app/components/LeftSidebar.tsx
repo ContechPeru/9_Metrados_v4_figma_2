@@ -1,11 +1,12 @@
 import { useNavigate, useLocation } from 'react-router';
 import {
   TableProperties, LayoutDashboard, Users, BookOpen,
-  BarChart2, Settings2, ChevronRight, LogOut, HardHat, FileUp, TrendingUp
+  BarChart2, Settings2, ChevronRight, LogOut, FileUp, TrendingUp
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useAuthStore } from '../store/useAuthStore';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { AppIcon } from './ui/AppIcon';
 
 const NAV_ITEMS = [
   { icon: TableProperties, label: 'Planilla', path: '/', id: 'metrados' },
@@ -160,25 +161,70 @@ export function LeftSidebar() {
         }}
       >
         {/* Header / Logo */}
-        <div className={`h-[60px] flex items-center ${sidebarExpanded ? 'justify-between px-3' : 'justify-center'} border-b`} style={{ borderColor: SIDEBAR_BORDER }}>
-          {sidebarExpanded && (
-            <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-slate-100 shadow-sm border" style={{ borderColor: '#DDE3EC' }}>
-                <HardHat size={16} color={ACTIVE_BG} strokeWidth={2.5} />
+        <div
+          className={`h-[60px] flex items-center ${
+            sidebarExpanded ? 'justify-between px-3' : 'justify-center'
+          } border-b`}
+          style={{ borderColor: SIDEBAR_BORDER }}
+        >
+          {sidebarExpanded ? (
+            <div
+              className="flex items-center gap-2.5 overflow-hidden whitespace-nowrap cursor-pointer select-none"
+              onClick={() => navigate('/')}
+              title="Ir a inicio · Planilla de Metrados"
+            >
+              <div
+                className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center bg-white shadow-sm border hover:shadow transition-all"
+                style={{ borderColor: '#DDE3EC' }}
+              >
+                <AppIcon size={20} />
               </div>
-              <span style={{ color: LOGO_TEXT, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '15px', letterSpacing: '0.04em' }}>
-                METRADOS
-              </span>
+              <div className="flex flex-col">
+                <span
+                  style={{
+                    color: LOGO_TEXT,
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '15px',
+                    letterSpacing: '0.04em',
+                    lineHeight: 1.1,
+                  }}
+                >
+                  METRADOS
+                </span>
+                <span
+                  style={{
+                    color: VERSION_TEXT,
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '9px',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  v4.0 · Belempampa
+                </span>
+              </div>
             </div>
+          ) : (
+            <button
+              onClick={() => setSidebarExpanded(true)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center bg-white shadow-sm border hover:scale-105 hover:shadow-md transition-all cursor-pointer"
+              style={{ borderColor: '#DDE3EC' }}
+              title="Expandir menú · Metrados"
+              aria-label="Expandir menú"
+            >
+              <AppIcon size={22} />
+            </button>
           )}
-          <button
-            onClick={() => setSidebarExpanded(!sidebarExpanded)}
-            className="p-1.5 rounded-md hover:bg-slate-100 transition-colors border shadow-sm bg-gray-50"
-            style={{ color: ICON_DEFAULT, borderColor: '#DDE3EC' }}
-            title={sidebarExpanded ? "Colapsar menú" : "Expandir menú"}
-          >
-            {sidebarExpanded ? <ChevronRight size={16} className="rotate-180" /> : <ChevronRight size={16} />}
-          </button>
+          {sidebarExpanded && (
+            <button
+              onClick={() => setSidebarExpanded(!sidebarExpanded)}
+              className="p-1.5 rounded-md hover:bg-slate-100 transition-colors border shadow-sm bg-gray-50 cursor-pointer"
+              style={{ color: ICON_DEFAULT, borderColor: '#DDE3EC' }}
+              title="Colapsar menú"
+            >
+              <ChevronRight size={16} className="rotate-180" />
+            </button>
+          )}
         </div>
 
         {/* Main Nav */}

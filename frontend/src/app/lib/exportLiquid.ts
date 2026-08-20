@@ -306,7 +306,7 @@ export async function buildWorkbook(rows: any[], filtros: FiltrosExport): Promis
         } else if (colKey === 'grado') {
           cell.value = m.grado; cell.alignment = aln('center');
         } else if (colKey === 'ubicacion') {
-          cell.value = m.ubicacion || ''; cell.alignment = aln('center');
+          cell.value = m.ubicacion || m.obs_detalle || ''; cell.alignment = aln('center');
         } else {
           // Otras celdas quedan vacías pero con borde
 

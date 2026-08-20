@@ -81,7 +81,7 @@ export function useMetradosForm(editingMetradoArg?: any, lockedEspecialidad?: st
         planoNum: editingMetrado.plano_num ?? '',
         planoEsp: editingMetrado.plano_esp ?? '',
         observacion: editingMetrado.observacion ?? '',
-        ubicacion: editingMetrado.ubicacion ?? '',
+        ubicacion: editingMetrado.ubicacion ?? editingMetrado.obs_detalle ?? '',
         overrideParcial: editingMetrado.resultado_parcial,
         overrideTotal: editingMetrado.resultado_total
       }));

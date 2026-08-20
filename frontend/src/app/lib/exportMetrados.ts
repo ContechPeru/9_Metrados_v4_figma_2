@@ -162,6 +162,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
         _partida_desc: partidaDesc,
         _detalle_completo: [m.elemento_desc, m.detalle_desc].filter(Boolean).join(' / '),
         _modificacion: p?.modificacion || '',
+        ubicacion: m.ubicacion || m.obs_detalle || '',
         firma_ingeniero: getInitials(m.firma_ingeniero),
         _obreros: obrerosStr,
         _plano: m.sin_plano
@@ -210,6 +211,7 @@ async function fetchDatos(filtros: FiltrosExport, localData?: any[]) {
       _partida_desc: partidaDesc,
       _detalle_completo: [m.elemento_desc, m.detalle_desc].filter(Boolean).join(' / '),
       _modificacion: m.catalogo_partidas?.modificacion || '',
+      ubicacion: m.ubicacion || m.obs_detalle || '',
       firma_ingeniero: getInitials(m.firma_ingeniero),
       _obreros: (() => {
           // Prioridad 1: relación metrados_obreros → personal_obrero (fuente canónica)

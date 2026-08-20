@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, CreditCard, Archive, ArrowRight, AlertCircle, HardHat } from 'lucide-react';
+import { Eye, EyeOff, CreditCard, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { supabase } from '../../lib/supabase';
+import { AppIcon } from '../ui/AppIcon';
 
 export default function LoginPage() {
   const login = useAuthStore(state => state.login);
@@ -63,15 +64,15 @@ export default function LoginPage() {
         <div className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)' }}
+            style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.25)', boxShadow: '0 4px 14px rgba(0,0,0,0.1)' }}
           >
-            <Archive size={20} color="white" strokeWidth={2} />
+            <AppIcon size={24} variant="white" />
           </div>
           <div>
             <div style={{ color: 'white', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '16px', letterSpacing: '0.06em' }}>
               METRADOS
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'JetBrains Mono, monospace', fontSize: '10px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'JetBrains Mono, monospace', fontSize: '10px' }}>
               v4.0 · Perú
             </div>
           </div>
@@ -126,14 +127,13 @@ export default function LoginPage() {
         <div style={{ width: '100%', maxWidth: 440 }}>
 
           {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2 mb-10">
+          <div className="flex lg:hidden items-center gap-2.5 mb-10">
             <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #1A6BFF 0%, #0F4FC8 100%)' }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center shadow-md bg-white border border-slate-200"
             >
-              <HardHat size={15} color="white" strokeWidth={2} />
+              <AppIcon size={22} />
             </div>
-            <span style={{ color: '#1E3A5F', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '15px', letterSpacing: '0.05em' }}>
+            <span style={{ color: '#1E3A5F', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '16px', letterSpacing: '0.05em' }}>
               METRADOS
             </span>
           </div>

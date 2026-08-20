@@ -41,7 +41,7 @@ interface PartidaRowProps {
 
 const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpand, viewMode, index, measureRef }: PartidaRowProps) => {
   const hasChildren = Object.keys(node.children).length > 0 || node.metrados.length > 0;
-  
+
   // Estilos condicionales por nivel S10
   let bgClass = 'bg-white';
   let textClass = 'text-slate-700';
@@ -67,11 +67,11 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
     <tr key={`p-${dateGroup}-${node.partida.id}`} role="row" aria-expanded={hasChildren ? isExpanded : undefined} aria-level={depth + 1} className={`hover:bg-blue-50/50 transition-colors ${bgClass} ${textClass} ${fontClass} text-[11px]`} ref={measureRef} data-index={index}>
       {/* Checkbox / Espacio */}
       <td className="px-2 py-2 border-b border-slate-200"></td>
-      
+
       {isDetallada && (
         <td className="px-1 py-2 border-b border-slate-200"></td>
       )}
-      
+
       {/* Item (con sangría) */}
       <td className="px-1.5 py-2 border-b border-slate-200 truncate" style={{ paddingLeft: `${Math.max(12, depth * 20)}px` }}>
         <div className="flex items-center gap-1">
@@ -83,18 +83,18 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
           <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>{node.partida.codigo_expediente}</span>
         </div>
       </td>
-      
+
       {/* Descripción */}
       <td className="px-1.5 py-2 border-b border-slate-200 whitespace-normal break-words leading-tight">
         {node.partida.modificacion && <span className="font-bold text-blue-600 mr-2 text-[10.5px]">[{node.partida.modificacion}]</span>}
         <span className="font-semibold text-slate-800 text-[10.5px] uppercase tracking-wide">{node.partida.descripcion}</span>
       </td>
-      
+
       {/* Unidad */}
       <td className="px-1.5 py-2 border-b border-slate-200 text-center text-slate-500 font-medium">
         {isAgrupador ? '' : node.partida.unidad_medida}
       </td>
-      
+
       {isDetallada && (
         <>
           <td className="px-1.5 py-2 border-b border-slate-200" />
@@ -105,7 +105,7 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
           <td className="px-1.5 py-2 border-b border-slate-200" />
         </>
       )}
-      
+
       {/* Parcial Totalizado Bottom-Up */}
       <td className="px-1.5 py-2 border-b border-slate-200 text-right font-bold text-blue-700" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
         {node.parcialTotal > 0 ? formatNum(node.parcialTotal) : ''}
@@ -121,7 +121,7 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
           </td>
         </>
       )}
-      
+
       {/* Acciones */}
       {isDetallada && <td className="px-1.5 py-2 border-b border-slate-200"></td>}
     </tr>
@@ -137,39 +137,43 @@ const PartidaRow = React.memo(({ node, depth, dateGroup, isExpanded, toggleExpan
   );
 });
 
-const MetradoRow = React.memo(({ 
-  m, 
-  depth, 
-  isSelected, 
+const MetradoRow = React.memo(({
+  m,
+  depth,
+  isSelected,
   callbacksRef,
   measureRef,
-  index
-}: { 
-  m: MetradoRecord, 
-  depth: number, 
-  isSelected: boolean, 
+  index,
+  partidaModif
+}: {
+  m: MetradoRecord,
+  depth: number,
+  isSelected: boolean,
   callbacksRef: React.MutableRefObject<any>,
   measureRef?: any,
-  index?: number
+  index?: number,
+  partidaModif?: string | null
 }) => {
   const { canEditMetrado, canLiberarMetrados } = useAuthStore();
+  const modifVal = m.ubicacion || m.obs_detalle || partidaModif;
+
   return (
-    <tr 
+    <tr
       ref={measureRef}
       data-index={index}
-      role="row" 
-      aria-level={depth + 2} 
+      role="row"
+      aria-level={depth + 2}
       className={`transition-colors text-[10.5px] border-b border-green-100/50 ${(m.sin_plano || m.obs_motivo) ? 'bg-orange-50/80 hover:bg-orange-100 text-orange-900' : m.is_liberado ? 'bg-[#E0F2FE] hover:bg-[#BAE6FD] text-slate-800' : 'bg-emerald-50 hover:bg-emerald-100 text-slate-700'}`}
     >
       <td className="px-1 py-1 text-center">
-        <div 
-          className="flex items-center justify-center p-2.5 -m-1.5 cursor-pointer rounded hover:bg-black/5" 
+        <div
+          className="flex items-center justify-center p-2.5 -m-1.5 cursor-pointer rounded hover:bg-black/5"
           onClick={(e) => { e.stopPropagation(); callbacksRef.current.onToggleSelection?.(m.id); }}
         >
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             checked={isSelected}
-            onChange={() => {}} // Handled by div click
+            onChange={() => { }} // Handled by div click
             className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer pointer-events-none"
             aria-label={`Seleccionar metrado del ${m.fecha_ejecucion}`}
           />
@@ -178,7 +182,7 @@ const MetradoRow = React.memo(({
       <td className="px-1 py-1.5 whitespace-nowrap opacity-80 text-center" style={{ letterSpacing: '-0.5px' }}>
         {m.fecha_ejecucion ? `${m.fecha_ejecucion.split('-')[2]}/${m.fecha_ejecucion.split('-')[1]}/${m.fecha_ejecucion.split('-')[0].slice(-2)}` : ''}
       </td>
-      
+
       <td className="px-1.5 py-1.5">
         <div className="flex items-center flex-wrap gap-1 pl-8 opacity-80">
           {m.frente_trabajo && m.frente_trabajo !== '-' && <span className="bg-slate-200 px-1.5 rounded text-[9px] font-bold text-slate-600" title="Frente de Trabajo">{m.frente_trabajo}</span>}
@@ -186,34 +190,35 @@ const MetradoRow = React.memo(({
           {m.nivel_piso && m.nivel_piso !== '-' && <span className="bg-slate-200 px-1.5 rounded text-[9px] font-bold text-slate-600" title="Nivel/Piso">{m.nivel_piso}</span>}
           {m.ambiente && m.ambiente !== '-' && <span className="bg-emerald-100 px-1.5 rounded text-[9px] font-bold text-emerald-700" title="Ambiente / Sistema">{m.ambiente}</span>}
           {m.plano_num && m.plano_num !== '-' && <span className="bg-emerald-100 px-1.5 rounded text-[9px] font-bold text-emerald-700" title="N° Plano">{m.plano_num}</span>}
+          {modifVal && <span className="bg-indigo-100 px-1.5 rounded text-[9px] font-bold text-indigo-700" title={`Ubicación / Modificación: ${modifVal}`}>{modifVal}</span>}
           {m.observacion && <span className="bg-red-100 px-1.5 rounded text-[9px] font-bold text-red-700 cursor-help" title={m.observacion}>OBS</span>}
         </div>
       </td>
       <td className="px-1.5 py-1.5 pl-10 text-slate-600 italic whitespace-normal break-words leading-tight">
         {m.elemento_desc} {m.detalle_desc ? `- ${m.detalle_desc}` : ''}
       </td>
-      
+
       <td className="px-1.5 py-1.5 text-center opacity-60">{m.unidad}</td>
-      
+
       {/* Celdas numéricas con fuente Mono */}
       <td className="px-1.5 py-1.5 text-center opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.cantidad_elementos || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_largo_area || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_ancho_empalme || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.medida_alto_gancho || '-'}</td>
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{formatNum(m.resultado_parcial)}</td>
-      
+
       <td className="px-1.5 py-1.5 text-center font-medium opacity-80 truncate max-w-[100px]">{m.autor_nombre?.split(' ')[0] || m.firma_ingeniero || '-'}</td>
-      
+
       <td className="px-1.5 py-1.5 text-right opacity-90" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{m.nro_repeticiones || '-'}</td>
-      
+
       <td className="px-1.5 py-1.5 text-left opacity-90 border-l border-slate-100/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
         {formatNum(m.resultado_total)}
       </td>
-      
+
       <td className="px-2 py-1 whitespace-nowrap">
         <div className="flex items-center gap-1.5">
-          <div 
-            className={`p-1.5 rounded ${m.is_liberado ? 'text-green-600' : 'text-slate-400'} ${canLiberarMetrados() ? 'cursor-pointer hover:bg-slate-100' : ''}`} 
+          <div
+            className={`p-1.5 rounded ${m.is_liberado ? 'text-green-600' : 'text-slate-400'} ${canLiberarMetrados() ? 'cursor-pointer hover:bg-slate-100' : ''}`}
             title={m.is_liberado ? "Aprobado" : "Pendiente"}
             onClick={(e) => {
               if (canLiberarMetrados()) {
@@ -316,7 +321,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         const parentId = node.partida.parent_id;
         // Optimization: Sort metrados immediately by snapshot_codigo or fecha
         node.metrados.sort((a, b) => (a.fecha_ejecucion || '').localeCompare(b.fecha_ejecucion || ''));
-        
+
         if (parentId && allNodes[parentId]) {
           allNodes[parentId].children[node.partida.id] = node;
         } else {
@@ -329,8 +334,8 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         Object.values(nodes).forEach(node => {
           let nodeTotal = 0;
           if (Object.keys(node.children).length > 0) nodeTotal += calculateTotals(node.children);
-          
-          node.sortedChildren = Object.values(node.children).sort((a, b) => 
+
+          node.sortedChildren = Object.values(node.children).sort((a, b) =>
             a.partida.codigo_expediente.localeCompare(b.partida.codigo_expediente, undefined, { numeric: true, sensitivity: 'base' })
           );
 
@@ -343,14 +348,14 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
 
       calculateTotals(rootNodes);
 
-      return Object.values(rootNodes).sort((a, b) => 
+      return Object.values(rootNodes).sort((a, b) =>
         a.partida.codigo_expediente.localeCompare(b.partida.codigo_expediente, undefined, { numeric: true, sensitivity: 'base' })
       );
     };
 
     const result: Record<string, TreeNode[]> = {};
     const globalPartidasMap = new Map<string, Partida>(partidas.map(p => [p.id, p]));
-    
+
     for (const [date, mets] of Object.entries(groups)) {
       result[date] = buildTree(mets, globalPartidasMap);
     }
@@ -377,9 +382,9 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
         if (isExpanded) {
           const childrenArr = node.sortedChildren || [];
           childrenArr.forEach(child => flattenNode(child, depth + 1, dateGroup));
-          
+
           if (viewMode === 'Detallada' && node.metrados.length > 0) {
-            node.metrados.forEach(m => flat.push({ type: 'metrado', m, depth }));
+            node.metrados.forEach(m => flat.push({ type: 'metrado', m, depth, partidaModif: node.partida.modificacion }));
           }
         }
       };
@@ -411,7 +416,7 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
           <tr role="row">
             <th className="px-2 py-2.5 w-[30px] border-b border-[#a7f3d0] text-center">
               {viewMode === 'Detallada' && (
-                <input 
+                <input
                   type="checkbox"
                   onChange={(e) => {
                     if (e.target.checked) onSelectAll?.(metrados.map(m => m.id));
@@ -476,20 +481,21 @@ export default function MetradosTreeGrid({ metrados, partidas, onEdit, onDelete,
                   toggleExpand={toggleExpand}
                   viewMode={viewMode}
                   index={virtualRow.index}
-                  measureRef={virtualRow.measureElement}
+                  measureRef={rowVirtualizer.measureElement}
                 />
               );
             } else if (rowData.type === 'metrado') {
               // Extract the component creation from the old recursive function directly here
               return (
-                <MetradoRow 
+                <MetradoRow
                   key={virtualRow.key}
-                  m={rowData.m} 
-                  depth={rowData.depth} 
-                  isSelected={selectedIds.has(rowData.m.id)} 
-                  callbacksRef={callbacksRef} 
-                  measureRef={virtualRow.measureElement}
+                  m={rowData.m}
+                  depth={rowData.depth}
+                  isSelected={selectedIds.has(rowData.m.id)}
+                  callbacksRef={callbacksRef}
+                  measureRef={rowVirtualizer.measureElement}
                   index={virtualRow.index}
+                  partidaModif={rowData.partidaModif}
                 />
               );
             }
